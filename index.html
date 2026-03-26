@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KURA COFFEE — 職人咖啡</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;600&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5efe4;
+    --dark: #1a1208;
+    --brown: #3d2010;
+    --amber: #c87941;
+    --gold: #e8b96a;
+    --muted: #8a7060;
+    --light: #fdf8f0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Noto Serif TC', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-trail {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.35s ease;
+    opacity: 0.5;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(26,18,8,0.95), transparent);
+    backdrop-filter: blur(2px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+  }
+  .nav-links {
+    display: flex; gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.3s;
+    font-family: 'DM Mono', monospace;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 28px; height: 1px;
+    background: var(--cream);
+    transition: all 0.3s;
+  }
+
+  /* Mobile Nav */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,18,8,0.98);
+    z-index: 99;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    color: var(--cream);
+    text-decoration: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: menuItemIn 0.4s forwards;
+  }
+  .mobile-menu a:nth-child(1) { animation-delay: 0.05s; }
+  .mobile-menu a:nth-child(2) { animation-delay: 0.1s; }
+  .mobile-menu a:nth-child(3) { animation-delay: 0.15s; }
+  .mobile-menu a:nth-child(4) { animation-delay: 0.2s; }
+  .mobile-menu a:nth-child(5) { animation-delay: 0.25s; }
+  @keyframes menuItemIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 30% 60%, #2a1508 0%, var(--dark) 60%);
+  }
+  .hero-bg-text {
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(8rem, 20vw, 22rem);
+    color: rgba(200,121,65,0.04);
+    white-space: nowrap;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    user-select: none;
+    letter-spacing: 0.05em;
+  }
+  .hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 9vw, 8rem);
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.7s forwards;
+    font-weight: 300;
+  }
+  .hero-cta {
+    display: inline-block;
+    padding: 1rem 3rem;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.9s forwards;
+    transition: background 0.3s, color 0.3s;
+  }
+  .hero-cta:hover { background: var(--amber); color: var(--dark); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 1.3s forwards;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(to bottom, var(--amber), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* Sections */
+  section { padding: 8rem 2rem; }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--amber);
+    margin: 2rem 0;
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* Coffees Section */
+  #coffees {
+    background: var(--light);
+    color: var(--dark);
+  }
+  .coffees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    margin-top: 4rem;
+  }
+  .coffee-card {
+    background: var(--cream);
+    padding: 3rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+    transition: transform 0.4s ease;
+  }
+  .coffee-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--amber);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .coffee-card:hover::before { transform: scaleX(1); }
+  .coffee-card:hover { transform: translateY(-4px); }
+
+  .coffee-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .coffee-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: var(--brown);
+  }
+  .coffee-origin {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .coffee-desc {
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: var(--muted);
+    font-weight: 300;
+  }
+  .coffee-tags {
+    margin-top: 1.5rem;
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--amber);
+    color: var(--brown);
+    text-transform: uppercase;
+  }
+
+  /* Brewing */
+  #brewing {
+    background: var(--brown);
+    position: relative;
+    overflow: hidden;
+  }
+  #brewing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 20%, rgba(200,121,65,0.15) 0%, transparent 60%);
+  }
+  .brewing-tabs {
+    display: flex;
+    gap: 0;
+    margin: 3rem 0 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    cursor: none;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: var(--amber);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .tab-btn.active { color: var(--cream); }
+  .tab-btn.active::after { transform: scaleX(1); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .brewing-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .step {
+    position: relative;
+    padding-left: 3rem;
+  }
+  .step-num {
+    position: absolute;
+    left: 0; top: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: rgba(200,121,65,0.2);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--gold);
+  }
+  .step-desc {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: rgba(245,239,228,0.6);
+    font-weight: 300;
+  }
+
+  /* Masters */
+  #masters {
+    background: var(--dark);
+    position: relative;
+  }
+  .masters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-top: 4rem;
+  }
+  .master-card {
+    border-top: 1px solid rgba(200,121,65,0.3);
+    padding-top: 2rem;
+  }
+  .master-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .master-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--amber), var(--brown));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .master-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+  }
+  .master-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+  .master-quote {
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: rgba(245,239,228,0.7);
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+  .master-fav {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+  }
+  .master-fav span {
+    color: var(--cream);
+    font-style: normal;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Noto Serif TC', serif;
+  }
+
+  /* Stories */
+  #stories {
+    background: #0e0b06;
+    position: relative;
+  }
+  .stories-intro {
+    max-width: 600px;
+  }
+  .stories-intro p {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--muted);
+    font-weight: 300;
+    margin-top: 1rem;
+  }
+  .stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+  .story-card {
+    background: rgba(61,32,16,0.15);
+    border: 1px solid rgba(200,121,65,0.1);
+    padding: 2.5rem;
+    position: relative;
+    transition: border-color 0.4s;
+  }
+  .story-card:hover { border-color: rgba(200,121,65,0.4); }
+  .story-quote-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    color: rgba(200,121,65,0.1);
+    line-height: 1;
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+    user-select: none;
+  }
+  .story-text {
+    font-size: 0.9rem;
+    line-height: 2;
+    color: rgba(245,239,228,0.75);
+    font-weight: 300;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+  .story-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .story-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex-shrink: 0;
+  }
+  .story-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+  }
+  .story-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* Submit Story */
+  .story-submit {
+    margin-top: 4rem;
+    border: 1px dashed rgba(200,121,65,0.3);
+    padding: 3rem;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .story-submit:hover { border-color: var(--amber); }
+  .story-submit h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: var(--cream);
+  }
+  .story-submit p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+  .submit-form {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .submit-form input,
+  .submit-form textarea {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(200,121,65,0.2);
+    color: var(--cream);
+    padding: 1rem 1.5rem;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.3s;
+    resize: none;
+  }
+  .submit-form input:focus,
+  .submit-form textarea:focus { border-color: var(--amber); }
+  .submit-form input::placeholder,
+  .submit-form textarea::placeholder { color: var(--muted); }
+  .submit-btn {
+    background: var(--amber);
+    color: var(--dark);
+    border: none;
+    padding: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .submit-btn:hover { background: var(--gold); transform: translateY(-2px); }
+
+  .success-msg {
+    display: none;
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    animation: fadeUp 0.5s forwards;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid rgba(200,121,65,0.15);
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  footer .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    section { padding: 5rem 1.5rem; }
+    .brewing-tabs { gap: 0; }
+    .tab-btn { padding: 0.8rem 1rem; font-size: 0.6rem; }
+    .story-submit { padding: 2rem 1.5rem; }
+    .coffees-grid { grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title { font-size: 2.5rem; }
+    .brewing-steps { grid-template-columns: 1fr; }
+    .masters-grid { grid-template-columns: 1fr; }
+    .stories-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Marquee */
+  .marquee-wrap {
+    overflow: hidden;
+    background: var(--amber);
+    padding: 0.8rem 0;
+  }
+  .marquee-track {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 30s linear infinite;
+  }
+  .marquee-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dark);
+    padding: 0 3rem;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">KURA</div>
+  <ul class="nav-links">
+    <li><a href="#coffees">咖啡豆</a></li>
+    <li><a href="#brewing">沖泡</a></li>
+    <li><a href="#masters">職人</a></li>
+    <li><a href="#stories">品嚐故事</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="選單">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#coffees" onclick="closeMenu()">咖啡豆</a>
+  <a href="#brewing" onclick="closeMenu()">沖泡方式</a>
+  <a href="#masters" onclick="closeMenu()">職人</a>
+  <a href="#stories" onclick="closeMenu()">品嚐故事</a>
+</div>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-bg-text">KURA</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">精品咖啡 · 職人手藝</div>
+    <h1 class="hero-title">每一杯<em>沉靜</em><br>都是一場旅程</h1>
+    <p class="hero-sub">從產地到杯中，我們追尋那一瞬間<br>香氣、溫度與記憶交會的完美時刻。</p>
+    <a href="#coffees" class="hero-cta">探索咖啡世界</a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    SCROLL
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Single Origin</span>
+    <span class="marquee-item">手沖 Pour Over</span>
+    <span class="marquee-item">Espresso</span>
+    <span class="marquee-item">Cold Brew</span>
+    <span class="marquee-item">虹吸 Siphon</span>
+    <span class="marquee-item">Aeropress</span>
+    <span class="marquee-item">職人精神</span>
+    <span class="marquee-item">Single Origin</span>
+    <span class="marquee-item">手沖 Pour Over</span>
+    <span class="marquee-item">Espresso</span>
+    <span class="marquee-item">Cold Brew</span>
+    <span class="marquee-item">虹吸 Siphon</span>
+    <span class="marquee-item">Aeropress</span>
+    <span class="marquee-item">職人精神</span>
+  </div>
+</div>
+
+<!-- Coffees -->
+<section id="coffees">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">01 — 咖啡豆介紹</div>
+      <h2 class="section-title">探索世界<br>最珍稀的咖啡</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="coffees-grid">
+      <div class="coffee-card reveal reveal-delay-1">
+        <span class="coffee-icon">☕</span>
+        <div class="coffee-origin">Ethiopia · Yirgacheffe</div>
+        <h3 class="coffee-name">衣索比亞<br>耶加雪菲</h3>
+        <p class="coffee-desc">世界精品咖啡的聖地，帶有明亮的茉莉花香與柑橘酸味，尾韻如蜂蜜般圓潤甘甜。每一口都像是置身非洲高原清晨的薄霧之中。</p>
+        <div class="coffee-tags">
+          <span class="tag">花香</span>
+          <span class="tag">柑橘</span>
+          <span class="tag">中度烘焙</span>
+        </div>
+      </div>
+      <div class="coffee-card reveal reveal-delay-2">
+        <span class="coffee-icon">🫖</span>
+        <div class="coffee-origin">Colombia · Huila</div>
+        <h3 class="coffee-name">哥倫比亞<br>慧蘭</h3>
+        <p class="coffee-desc">安地斯山脈的恩賜，豐富的焦糖甜感與黑莓果香完美交融。口感醇厚飽滿，如絲綢般在舌尖緩緩展開，是入門精品咖啡的絕佳選擇。</p>
+        <div class="coffee-tags">
+          <span class="tag">焦糖</span>
+          <span class="tag">莓果</span>
+          <span class="tag">中深烘焙</span>
+        </div>
+      </div>
+      <div class="coffee-card reveal reveal-delay-3">
+        <span class="coffee-icon">✨</span>
+        <div class="coffee-origin">Japan · Kyoto Style</div>
+        <h3 class="coffee-name">京都式<br>冷萃</h3>
+        <p class="coffee-desc">靈感來自日本京都的滴漏水出法，以冰冷清水緩緩萃取長達16小時，帶出咖啡最溫柔的一面——低苦澀、高甜感，如同一首輕盈的俳句。</p>
+        <div class="coffee-tags">
+          <span class="tag">低酸</span>
+          <span class="tag">清甜</span>
+          <span class="tag">冷萃</span>
+        </div>
+      </div>
+      <div class="coffee-card reveal reveal-delay-1">
+        <span class="coffee-icon">🌿</span>
+        <div class="coffee-origin">Panama · Geisha</div>
+        <h3 class="coffee-name">巴拿馬<br>瑰夏</h3>
+        <p class="coffee-desc">咖啡世界的皇冠之珠，稀有而迷人。複雜的香氣層次如同一場感官交響樂——玫瑰、桃子、茉莉交織，酸度優雅，令人難以忘懷。</p>
+        <div class="coffee-tags">
+          <span class="tag">玫瑰</span>
+          <span class="tag">桃子</span>
+          <span class="tag">淺烘焙</span>
+        </div>
+      </div>
+      <div class="coffee-card reveal reveal-delay-2">
+        <span class="coffee-icon">🏔️</span>
+        <div class="coffee-origin">Taiwan · Alishan</div>
+        <h3 class="coffee-name">台灣<br>阿里山</h3>
+        <p class="coffee-desc">雲霧繚繞的高山孕育出的寶藏，帶有台灣高山茶的清雅韻味與堅果香氣，甜感持久綿長。這是一杯讓你驕傲的台灣之味。</p>
+        <div class="coffee-tags">
+          <span class="tag">茶感</span>
+          <span class="tag">堅果</span>
+          <span class="tag">中烘焙</span>
+        </div>
+      </div>
+      <div class="coffee-card reveal reveal-delay-3">
+        <span class="coffee-icon">🌊</span>
+        <div class="coffee-origin">Brazil · Cerrado</div>
+        <h3 class="coffee-name">巴西<br>塞拉多</h3>
+        <p class="coffee-desc">巴西最大的精品咖啡產區，以穩定而厚實的口感聞名。濃郁的巧克力與榛果香氣是義式濃縮的完美基底，為每日的晨間儀式帶來踏實的力量。</p>
+        <div class="coffee-tags">
+          <span class="tag">巧克力</span>
+          <span class="tag">榛果</span>
+          <span class="tag">深烘焙</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Brewing -->
+<section id="brewing">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">02 — 沖泡方式</div>
+      <h2 class="section-title">沖泡是<br>一門藝術</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="brewing-tabs reveal">
+      <button class="tab-btn active" onclick="switchTab('pourover')">手沖</button>
+      <button class="tab-btn" onclick="switchTab('espresso')">義式濃縮</button>
+      <button class="tab-btn" onclick="switchTab('siphon')">虹吸</button>
+      <button class="tab-btn" onclick="switchTab('aeropress')">愛樂壓</button>
+    </div>
+
+    <div id="pourover" class="tab-content active reveal">
+      <div class="brewing-steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4 class="step-title">研磨豆子</h4>
+          <p class="step-desc">使用中粗研磨度，如粗砂糖質感。建議現磨現沖，保留最完整的香氣分子，研磨後5分鐘內使用效果最佳。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4 class="step-title">悶蒸注水</h4>
+          <p class="step-desc">以92°C熱水繞圈注入，先用少量水悶蒸30秒，讓咖啡粉充分排氣。這個步驟決定了萃取的均勻程度。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4 class="step-title">穩定萃取</h4>
+          <p class="step-desc">以穩定的螺旋手法分段注水，總時間控制在2分30秒至3分鐘。保持注水高度一致，確保每粒咖啡粉都得到平均萃取。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h4 class="step-title">品味靜待</h4>
+          <p class="step-desc">萃取完成後靜置30秒，讓溫度稍降至飲用最佳溫度約68°C。此時香氣層次最為豐富，從第一口到最後一口體驗細膩的風味變化。</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="espresso" class="tab-content reveal">
+      <div class="brewing-steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4 class="step-title">細研磨</h4>
+          <p class="step-desc">義式濃縮需要細緻如麵粉般的研磨度。不同機器、不同豆子需要微調研磨刻度，這是萃取成功的第一關鍵。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4 class="step-title">填壓</h4>
+          <p class="step-desc">將咖啡粉填入粉碗，以約20公斤的力道均勻填壓。填壓是否水平直接影響水流路徑與萃取均勻度。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4 class="step-title">預浸潤</h4>
+          <p class="step-desc">以低壓預先浸潤咖啡餅約5秒，讓粉末充分吸水膨脹，避免通道效應（Channeling）的發生。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h4 class="step-title">9bar萃取</h4>
+          <p class="step-desc">以9bar壓力萃取25-30秒，目標萃取量約30ml。觀察Crema的顏色與厚度，是判斷萃取是否完美的視覺指標。</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="siphon" class="tab-content reveal">
+      <div class="brewing-steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4 class="step-title">組裝器具</h4>
+          <p class="step-desc">將過濾器固定於上壺，下壺注入適量熱水。虹吸壺如同實驗室器具，每個步驟都需精準，是最具儀式感的沖泡方式。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4 class="step-title">加熱上升</h4>
+          <p class="step-desc">以酒精燈或瓦斯爐加熱，下壺水蒸氣壓力將熱水推升至上壺，溫度維持在83-88°C的最佳萃取範圍。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4 class="step-title">攪拌萃取</h4>
+          <p class="step-desc">加入研磨好的咖啡粉，以竹棒輕柔攪拌，確保所有粉末與水完全接觸。萃取時間約60-90秒，依個人口味調整。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h4 class="step-title">回流完成</h4>
+          <p class="step-desc">移除熱源，溫差產生的真空吸力將咖啡液吸回下壺，留下完整的咖啡渣餅。倒出品嚐前，觀察這場美麗的物理魔術。</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="aeropress" class="tab-content reveal">
+      <div class="brewing-steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h4 class="step-title">預熱濕潤</h4>
+          <p class="step-desc">以熱水預熱愛樂壓各零件，同時濕潤濾紙去除紙味。愛樂壓是旅行者最愛的沖泡器具，輕巧卻能呈現豐富風味。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h4 class="step-title">加粉注水</h4>
+          <p class="step-desc">倒入中細研磨咖啡粉，注入85°C熱水至刻度2，立即攪拌10圈確保均勻浸潤。水溫較低能萃取出更甜、更柔和的風味。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h4 class="step-title">等待萃取</h4>
+          <p class="step-desc">靜置浸泡60-90秒。此時間可依個人喜好調整——時間越長，萃取越完整，風味越豐富；時間越短，口感越清爽。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h4 class="step-title">緩壓出液</h4>
+          <p class="step-desc">蓋上活塞，以穩定均勻的力道慢慢下壓，約20-30秒完成。聽到輕微的嘶聲代表壓榨完成，咖啡精華盡數萃出。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Masters -->
+<section id="masters">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">03 — 咖啡職人</div>
+      <h2 class="section-title">傳承技藝<br>的大師們</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="masters-grid">
+      <div class="master-card reveal reveal-delay-1">
+        <div class="master-header">
+          <div class="master-avatar">☕</div>
+          <div>
+            <div class="master-name">陳宗翰</div>
+            <div class="master-role">Head Roaster · 首席烘豆師</div>
+          </div>
+        </div>
+        <p class="master-quote">「烘焙不是在對抗咖啡豆，而是在與它對話。每一批豆子都有自己的個性，我的工作是幫它找到最美好的表達方式。」</p>
+        <div class="master-fav">最愛沖泡法 — <span>虹吸壺，喜歡那個儀式感</span></div>
+        <br>
+        <div class="master-fav">最愛咖啡豆 — <span>衣索比亞耶加雪菲日曬處理</span></div>
+        <br>
+        <div class="master-fav">每日咖啡量 — <span>5杯，清晨第一杯最神聖</span></div>
+      </div>
+      <div class="master-card reveal reveal-delay-2">
+        <div class="master-header">
+          <div class="master-avatar">🫖</div>
+          <div>
+            <div class="master-name">林佳穎</div>
+            <div class="master-role">Barista Champion · 咖啡師冠軍</div>
+          </div>
+        </div>
+        <p class="master-quote">「我喜歡觀察客人喝下第一口時的表情。那個瞬間，所有的練習、所有的失敗都值得了。咖啡是最真誠的情感語言。」</p>
+        <div class="master-fav">最愛沖泡法 — <span>手沖，控制每個細節</span></div>
+        <br>
+        <div class="master-fav">最愛咖啡豆 — <span>巴拿馬瑰夏水洗處理</span></div>
+        <br>
+        <div class="master-fav">每日咖啡量 — <span>3杯，質重於量</span></div>
+      </div>
+      <div class="master-card reveal reveal-delay-3">
+        <div class="master-header">
+          <div class="master-avatar">✨</div>
+          <div>
+            <div class="master-name">吳大明</div>
+            <div class="master-role">Green Buyer · 生豆採購師</div>
+          </div>
+        </div>
+        <p class="master-quote">「我每年走訪十幾個產地，與農民建立真正的夥伴關係。好的咖啡，從土壤開始。尊重土地，才能尊重這杯咖啡。」</p>
+        <div class="master-fav">最愛沖泡法 — <span>愛樂壓，旅途中的好夥伴</span></div>
+        <br>
+        <div class="master-fav">最愛咖啡豆 — <span>台灣阿里山蜜處理</span></div>
+        <br>
+        <div class="master-fav">每日咖啡量 — <span>4杯，工作就是喝咖啡</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stories -->
+<section id="stories">
+  <div class="section-inner">
+    <div class="stories-intro reveal">
+      <div class="section-label">04 — 品嚐故事</div>
+      <h2 class="section-title">來自品嚐者<br>的真實聲音</h2>
+      <div class="divider"></div>
+      <p>這裡是給所有愛咖啡的人的園地。無論你是每天一杯的上班族，還是剛踏入精品咖啡世界的新手，你的感受與故事對我們同樣珍貴——這是給職人們最真實的回饋。</p>
+    </div>
+
+    <div class="stories-grid">
+      <div class="story-card reveal reveal-delay-1">
+        <div class="story-quote-mark">"</div>
+        <p class="story-text">第一次喝到耶加雪菲，我以為自己喝的是花草茶。那種茉莉花香讓我整個世界觀都改變了。從此我知道，咖啡不只是咖啡，它是一整個風土的故事。</p>
+        <div class="story-author">
+          <div class="story-dot"></div>
+          <div>
+            <div class="story-name">Mia C.</div>
+            <div class="story-meta">設計師 · 咖啡愛好者三年</div>
+          </div>
+        </div>
+      </div>
+      <div class="story-card reveal reveal-delay-2">
+        <div class="story-quote-mark">"</div>
+        <p class="story-text">我媽媽在家裡總是煮那種很苦的三合一，我一直以為自己不喜歡咖啡。直到在這裡喝了一杯阿里山手沖，那個熟悉的台灣高山茶香，突然讓我鼻酸了。</p>
+        <div class="story-author">
+          <div class="story-dot"></div>
+          <div>
+            <div class="story-name">Kevin L.</div>
+            <div class="story-meta">工程師 · 咖啡轉換期</div>
+          </div>
+        </div>
+      </div>
+      <div class="story-card reveal reveal-delay-3">
+        <div class="story-quote-mark">"</div>
+        <p class="story-text">作為一個曾經在咖啡館工作過的人，我非常挑剔。但這裡的虹吸壺冰鎮了我所有的挑剔——那個清澈度、那個乾淨感，是我喝過最接近夢想的一杯咖啡。</p>
+        <div class="story-author">
+          <div class="story-dot"></div>
+          <div>
+            <div class="story-name">Sarah W.</div>
+            <div class="story-meta">前咖啡師 · 現美食記者</div>
+          </div>
+        </div>
+      </div>
+      <div class="story-card reveal reveal-delay-1">
+        <div class="story-quote-mark">"</div>
+        <p class="story-text">失戀那天，我一個人坐在角落喝了一杯哥倫比亞。不知道為什麼，那個焦糖甜感讓我哭了出來，但哭完之後感覺好多了。謝謝那杯咖啡陪我度過那個下午。</p>
+        <div class="story-author">
+          <div class="story-dot"></div>
+          <div>
+            <div class="story-name">Alex T.</div>
+            <div class="story-meta">學生 · 尋找慰藉的人</div>
+          </div>
+        </div>
+      </div>
+      <div class="story-card reveal reveal-delay-2">
+        <div class="story-quote-mark">"</div>
+        <p class="story-text">帶爸爸來這裡是我做過最正確的決定。他喝了一輩子的黑咖啡，以為精品咖啡就是「貴的」咖啡。看到他第一次皺眉頭、然後慢慢點頭的樣子，值了。</p>
+        <div class="story-author">
+          <div class="story-dot"></div>
+          <div>
+            <div class="story-name">Tina H.</div>
+            <div class="story-meta">建築師 · 咖啡傳教士</div>
+          </div>
+        </div>
+      </div>
+      <div class="story-card reveal reveal-delay-3">
+        <div class="story-quote-mark">"</div>
+        <p class="story-text">我從東京特別飛來喝冷萃。朋友說我瘋了，但當咖啡入口的那一刻，那個清甜與深邃同時存在的感覺——是的，我不後悔這趟旅程。</p>
+        <div class="story-author">
+          <div class="story-dot"></div>
+          <div>
+            <div class="story-name">Yuki M.</div>
+            <div class="story-meta">咖啡獵人 · 來自東京</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Form -->
+    <div class="story-submit reveal">
+      <h3>分享你的咖啡故事</h3>
+      <p>每一個故事都是給職人們最珍貴的靈感。告訴我們，那杯咖啡帶給你什麼？</p>
+      <div class="submit-form">
+        <input type="text" id="nameInput" placeholder="你的名字或匿名" />
+        <input type="text" id="roleInput" placeholder="你的身份（例：上班族、學生、旅行者...）" />
+        <textarea id="storyInput" rows="5" placeholder="寫下你的咖啡故事..."></textarea>
+        <button class="submit-btn" onclick="submitStory()">送出故事</button>
+        <div class="success-msg" id="successMsg">✦ 謝謝你的故事，我們的職人們會細心閱讀每一個字。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">KURA COFFEE</div>
+  <p style="margin-top: 0.5rem;">職人精神 · 從產地到杯中</p>
+  <p style="margin-top: 1.5rem; opacity: 0.4;">© 2025 Kura Coffee. All rights reserved.</p>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const cursorTrail = document.getElementById('cursorTrail');
+  let mouseX = 0, mouseY = 0, trailX = 0, trailY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX - 6 + 'px';
+    cursor.style.top = mouseY - 6 + 'px';
+  });
+
+  function animateTrail() {
+    trailX += (mouseX - trailX) * 0.12;
+    trailY += (mouseY - trailY) * 0.12;
+    cursorTrail.style.left = trailX - 18 + 'px';
+    cursorTrail.style.top = trailY - 18 + 'px';
+    requestAnimationFrame(animateTrail);
+  }
+  animateTrail();
+
+  document.querySelectorAll('a, button, .coffee-card, .story-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(2.5)');
+    el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
+  });
+
+  // Mobile Menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  function closeMenu() { mobileMenu.classList.remove('open'); }
+
+  // Tabs
+  function switchTab(id) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // Scroll Reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Story Submit
+  function submitStory() {
+    const name = document.getElementById('nameInput').value.trim();
+    const story = document.getElementById('storyInput').value.trim();
+    if (!story) { return; }
+    document.getElementById('nameInput').value = '';
+    document.getElementById('roleInput').value = '';
+    document.getElementById('storyInput').value = '';
+    const msg = document.getElementById('successMsg');
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 5000);
+  }
+</script>
+</body>
+</html>
