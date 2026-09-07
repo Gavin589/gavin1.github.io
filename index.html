@@ -1,1197 +1,1330 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KURA COFFEE — 職人咖啡</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;600&family=DM+Mono:ital@0;1&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --cream: #f5efe4;
-    --dark: #1a1208;
-    --brown: #3d2010;
-    --amber: #c87941;
-    --gold: #e8b96a;
-    --muted: #8a7060;
-    --light: #fdf8f0;
-  }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--dark);
-    color: var(--cream);
-    font-family: 'Noto Serif TC', serif;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* Custom Cursor */
-  .cursor {
-    position: fixed;
-    width: 12px; height: 12px;
-    background: var(--amber);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.15s ease;
-    mix-blend-mode: difference;
-  }
-  .cursor-trail {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1px solid var(--amber);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transition: all 0.35s ease;
-    opacity: 0.5;
-  }
-
-  /* Nav */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 1.5rem 3rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(to bottom, rgba(26,18,8,0.95), transparent);
-    backdrop-filter: blur(2px);
-  }
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-  }
-  .nav-links {
-    display: flex; gap: 2.5rem;
-    list-style: none;
-  }
-  .nav-links a {
-    color: var(--cream);
-    text-decoration: none;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.7;
-    transition: opacity 0.3s, color 0.3s;
-    font-family: 'DM Mono', monospace;
-  }
-  .nav-links a:hover { opacity: 1; color: var(--gold); }
-
-  .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 4px;
-  }
-  .hamburger span {
-    display: block;
-    width: 28px; height: 1px;
-    background: var(--cream);
-    transition: all 0.3s;
-  }
-
-  /* Mobile Nav */
-  .mobile-menu {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(26,18,8,0.98);
-    z-index: 99;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2.5rem;
-  }
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a {
-    color: var(--cream);
-    text-decoration: none;
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: menuItemIn 0.4s forwards;
-  }
-  .mobile-menu a:nth-child(1) { animation-delay: 0.05s; }
-  .mobile-menu a:nth-child(2) { animation-delay: 0.1s; }
-  .mobile-menu a:nth-child(3) { animation-delay: 0.15s; }
-  .mobile-menu a:nth-child(4) { animation-delay: 0.2s; }
-  .mobile-menu a:nth-child(5) { animation-delay: 0.25s; }
-  @keyframes menuItemIn {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Hero */
-  #hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    background: radial-gradient(ellipse at 30% 60%, #2a1508 0%, var(--dark) 60%);
-  }
-  .hero-bg-text {
-    position: absolute;
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(8rem, 20vw, 22rem);
-    color: rgba(200,121,65,0.04);
-    white-space: nowrap;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    user-select: none;
-    letter-spacing: 0.05em;
-  }
-  .hero-content {
-    text-align: center;
-    position: relative;
-    z-index: 2;
-    padding: 2rem;
-  }
-  .hero-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.3s forwards;
-  }
-  .hero-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(3rem, 9vw, 8rem);
-    line-height: 1.05;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.9s 0.5s forwards;
-  }
-  .hero-title em {
-    font-style: italic;
-    color: var(--gold);
-  }
-  .hero-sub {
-    font-size: 1rem;
-    color: var(--muted);
-    line-height: 1.8;
-    max-width: 480px;
-    margin: 0 auto 2.5rem;
-    opacity: 0;
-    animation: fadeUp 0.9s 0.7s forwards;
-    font-weight: 300;
-  }
-  .hero-cta {
-    display: inline-block;
-    padding: 1rem 3rem;
-    border: 1px solid var(--amber);
-    color: var(--amber);
-    text-decoration: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0;
-    animation: fadeUp 0.9s 0.9s forwards;
-    transition: background 0.3s, color 0.3s;
-  }
-  .hero-cta:hover { background: var(--amber); color: var(--dark); }
-
-  .scroll-hint {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 1.3s forwards;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-  }
-  .scroll-line {
-    width: 1px;
-    height: 50px;
-    background: linear-gradient(to bottom, var(--amber), transparent);
-    animation: scrollPulse 2s infinite;
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; transform: scaleY(1); }
-    50% { opacity: 1; transform: scaleY(1.2); }
-  }
-
-  /* Sections */
-  section { padding: 8rem 2rem; }
-
-  .section-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 1rem;
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-  }
-
-  .divider {
-    width: 60px;
-    height: 1px;
-    background: var(--amber);
-    margin: 2rem 0;
-  }
-
-  /* Reveal animation */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-  .reveal-delay-4 { transition-delay: 0.4s; }
-
-  /* Coffees Section */
-  #coffees {
-    background: var(--light);
-    color: var(--dark);
-  }
-  .coffees-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2px;
-    margin-top: 4rem;
-  }
-  .coffee-card {
-    background: var(--cream);
-    padding: 3rem 2.5rem;
-    position: relative;
-    overflow: hidden;
-    cursor: none;
-    transition: transform 0.4s ease;
-  }
-  .coffee-card::before {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--amber);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-  }
-  .coffee-card:hover::before { transform: scaleX(1); }
-  .coffee-card:hover { transform: translateY(-4px); }
-
-  .coffee-icon {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-    display: block;
-  }
-  .coffee-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    margin-bottom: 0.5rem;
-    color: var(--brown);
-  }
-  .coffee-origin {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
-    color: var(--amber);
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-  .coffee-desc {
-    font-size: 0.9rem;
-    line-height: 1.9;
-    color: var(--muted);
-    font-weight: 300;
-  }
-  .coffee-tags {
-    margin-top: 1.5rem;
-    display: flex; gap: 0.5rem; flex-wrap: wrap;
-  }
-  .tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    padding: 0.3rem 0.8rem;
-    border: 1px solid var(--amber);
-    color: var(--brown);
-    text-transform: uppercase;
-  }
-
-  /* Brewing */
-  #brewing {
-    background: var(--brown);
-    position: relative;
-    overflow: hidden;
-  }
-  #brewing::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 80% 20%, rgba(200,121,65,0.15) 0%, transparent 60%);
-  }
-  .brewing-tabs {
-    display: flex;
-    gap: 0;
-    margin: 3rem 0 2rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    flex-wrap: wrap;
-  }
-  .tab-btn {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 1rem 1.5rem;
-    cursor: none;
-    position: relative;
-    transition: color 0.3s;
-  }
-  .tab-btn::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; left: 0; right: 0;
-    height: 2px;
-    background: var(--amber);
-    transform: scaleX(0);
-    transition: transform 0.3s;
-  }
-  .tab-btn.active { color: var(--cream); }
-  .tab-btn.active::after { transform: scaleX(1); }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  .brewing-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-  .step {
-    position: relative;
-    padding-left: 3rem;
-  }
-  .step-num {
-    position: absolute;
-    left: 0; top: 0;
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
-    color: rgba(200,121,65,0.2);
-    line-height: 1;
-  }
-  .step-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-    color: var(--gold);
-  }
-  .step-desc {
-    font-size: 0.85rem;
-    line-height: 1.8;
-    color: rgba(245,239,228,0.6);
-    font-weight: 300;
-  }
-
-  /* Masters */
-  #masters {
-    background: var(--dark);
-    position: relative;
-  }
-  .masters-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 3rem;
-    margin-top: 4rem;
-  }
-  .master-card {
-    border-top: 1px solid rgba(200,121,65,0.3);
-    padding-top: 2rem;
-  }
-  .master-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .master-avatar {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--amber), var(--brown));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-  .master-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    color: var(--cream);
-  }
-  .master-role {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    color: var(--amber);
-    text-transform: uppercase;
-    margin-top: 0.3rem;
-  }
-  .master-quote {
-    font-size: 0.9rem;
-    line-height: 1.9;
-    color: rgba(245,239,228,0.7);
-    font-style: italic;
-    font-weight: 300;
-    margin-bottom: 1rem;
-  }
-  .master-fav {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    color: var(--amber);
-    text-transform: uppercase;
-  }
-  .master-fav span {
-    color: var(--cream);
-    font-style: normal;
-    text-transform: none;
-    letter-spacing: 0;
-    font-family: 'Noto Serif TC', serif;
-  }
-
-  /* Stories */
-  #stories {
-    background: #0e0b06;
-    position: relative;
-  }
-  .stories-intro {
-    max-width: 600px;
-  }
-  .stories-intro p {
-    font-size: 0.95rem;
-    line-height: 1.9;
-    color: var(--muted);
-    font-weight: 300;
-    margin-top: 1rem;
-  }
-  .stories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 4rem;
-  }
-  .story-card {
-    background: rgba(61,32,16,0.15);
-    border: 1px solid rgba(200,121,65,0.1);
-    padding: 2.5rem;
-    position: relative;
-    transition: border-color 0.4s;
-  }
-  .story-card:hover { border-color: rgba(200,121,65,0.4); }
-  .story-quote-mark {
-    font-family: 'Playfair Display', serif;
-    font-size: 5rem;
-    color: rgba(200,121,65,0.1);
-    line-height: 1;
-    position: absolute;
-    top: 1rem; right: 1.5rem;
-    user-select: none;
-  }
-  .story-text {
-    font-size: 0.9rem;
-    line-height: 2;
-    color: rgba(245,239,228,0.75);
-    font-weight: 300;
-    margin-bottom: 2rem;
-    font-style: italic;
-  }
-  .story-author {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .story-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--amber);
-    flex-shrink: 0;
-  }
-  .story-name {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    color: var(--amber);
-    text-transform: uppercase;
-  }
-  .story-meta {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 0.2rem;
-  }
-
-  /* Submit Story */
-  .story-submit {
-    margin-top: 4rem;
-    border: 1px dashed rgba(200,121,65,0.3);
-    padding: 3rem;
-    text-align: center;
-    transition: border-color 0.3s;
-  }
-  .story-submit:hover { border-color: var(--amber); }
-  .story-submit h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-    color: var(--cream);
-  }
-  .story-submit p {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-bottom: 2rem;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.8;
-    font-weight: 300;
-  }
-  .submit-form {
-    max-width: 500px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .submit-form input,
-  .submit-form textarea {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(200,121,65,0.2);
-    color: var(--cream);
-    padding: 1rem 1.5rem;
-    font-family: 'Noto Serif TC', serif;
-    font-size: 0.85rem;
-    outline: none;
-    transition: border-color 0.3s;
-    resize: none;
-  }
-  .submit-form input:focus,
-  .submit-form textarea:focus { border-color: var(--amber); }
-  .submit-form input::placeholder,
-  .submit-form textarea::placeholder { color: var(--muted); }
-  .submit-btn {
-    background: var(--amber);
-    color: var(--dark);
-    border: none;
-    padding: 1rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: none;
-    transition: background 0.3s, transform 0.2s;
-  }
-  .submit-btn:hover { background: var(--gold); transform: translateY(-2px); }
-
-  .success-msg {
-    display: none;
-    color: var(--gold);
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1.1rem;
-    margin-top: 1rem;
-    animation: fadeUp 0.5s forwards;
-  }
-
-  /* Footer */
-  footer {
-    background: var(--dark);
-    border-top: 1px solid rgba(200,121,65,0.15);
-    padding: 4rem 2rem;
-    text-align: center;
-  }
-  footer .footer-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    color: var(--gold);
-    letter-spacing: 0.15em;
-    margin-bottom: 1rem;
-  }
-  footer p {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-
-  /* Animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    nav { padding: 1.2rem 1.5rem; }
-    .nav-links { display: none; }
-    .hamburger { display: flex; }
-    section { padding: 5rem 1.5rem; }
-    .brewing-tabs { gap: 0; }
-    .tab-btn { padding: 0.8rem 1rem; font-size: 0.6rem; }
-    .story-submit { padding: 2rem 1.5rem; }
-    .coffees-grid { grid-template-columns: 1fr; gap: 2px; }
-  }
-
-  @media (max-width: 480px) {
-    .hero-title { font-size: 2.5rem; }
-    .brewing-steps { grid-template-columns: 1fr; }
-    .masters-grid { grid-template-columns: 1fr; }
-    .stories-grid { grid-template-columns: 1fr; }
-  }
-
-  /* Marquee */
-  .marquee-wrap {
-    overflow: hidden;
-    background: var(--amber);
-    padding: 0.8rem 0;
-  }
-  .marquee-track {
-    display: flex;
-    white-space: nowrap;
-    animation: marquee 30s linear infinite;
-  }
-  .marquee-item {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--dark);
-    padding: 0 3rem;
-  }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-</style>
-</head>
-<body>
-
-<!-- Cursor -->
-<div class="cursor" id="cursor"></div>
-<div class="cursor-trail" id="cursorTrail"></div>
-
-<!-- Nav -->
-<nav>
-  <div class="nav-logo">KURA</div>
-  <ul class="nav-links">
-    <li><a href="#coffees">咖啡豆</a></li>
-    <li><a href="#brewing">沖泡</a></li>
-    <li><a href="#masters">職人</a></li>
-    <li><a href="#stories">品嚐故事</a></li>
-  </ul>
-  <button class="hamburger" id="hamburger" aria-label="選單">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#coffees" onclick="closeMenu()">咖啡豆</a>
-  <a href="#brewing" onclick="closeMenu()">沖泡方式</a>
-  <a href="#masters" onclick="closeMenu()">職人</a>
-  <a href="#stories" onclick="closeMenu()">品嚐故事</a>
+<html lang="zh-TW"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-container-lowest": "#ffffff",
+          "surface-container-highest": "#d8e3fb",
+          "on-tertiary": "#ffffff",
+          "on-secondary": "#ffffff",
+          "background": "#f9f9ff",
+          "secondary-fixed": "#81f9c1",
+          "on-error-container": "#93000a",
+          "secondary-container": "#7ef6be",
+          "on-primary-container": "#d4dcff",
+          "on-tertiary-fixed": "#380d00",
+          "tertiary-container": "#ad3b00",
+          "primary-container": "#1a56db",
+          "secondary": "#006c49",
+          "on-secondary-fixed": "#002113",
+          "inverse-surface": "#263143",
+          "on-primary-fixed-variant": "#003dab",
+          "surface-dim": "#cfdaf2",
+          "primary-fixed": "#dbe1ff",
+          "on-surface": "#111c2d",
+          "surface-tint": "#1353d8",
+          "outline-variant": "#c3c5d7",
+          "on-tertiary-container": "#ffd4c5",
+          "error": "#ba1a1a",
+          "on-surface-variant": "#434654",
+          "surface": "#f9f9ff",
+          "primary": "#003fb1",
+          "outline": "#737686",
+          "tertiary-fixed-dim": "#ffb59a",
+          "error-container": "#ffdad6",
+          "surface-variant": "#d8e3fb",
+          "surface-container-high": "#dee8ff",
+          "tertiary-fixed": "#ffdbcf",
+          "inverse-primary": "#b5c4ff",
+          "secondary-fixed-dim": "#63dca6",
+          "surface-container-low": "#f0f3ff",
+          "on-tertiary-fixed-variant": "#802a00",
+          "surface-container": "#e7eeff",
+          "on-secondary-fixed-variant": "#005236",
+          "tertiary": "#852b00",
+          "inverse-on-surface": "#ecf1ff",
+          "on-error": "#ffffff",
+          "primary-fixed-dim": "#b5c4ff",
+          "surface-bright": "#f9f9ff",
+          "on-primary-fixed": "#00174d",
+          "on-secondary-container": "#00714c",
+          "on-primary": "#ffffff",
+          "on-background": "#111c2d"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "margin-desktop": "2.5rem",
+          "space-xs": "0.5rem",
+          "space-2xs": "0.25rem",
+          "space-sm": "0.75rem",
+          "margin-tablet": "1.5rem",
+          "space-3xl": "4.5rem",
+          "margin-mobile": "1rem",
+          "gutter-mobile": "1rem",
+          "space-md": "1rem",
+          "container-max": "1280px",
+          "space-xl": "2rem",
+          "space-lg": "1.5rem",
+          "space-2xl": "3rem",
+          "gutter-desktop": "2rem",
+          "gutter-tablet": "1.5rem"
+        },
+        "fontFamily": {
+          "headline-md": ["Manrope"],
+          "headline-sm": ["Manrope"],
+          "headline-lg": ["Manrope"],
+          "body-md": ["Manrope"],
+          "body-lg": ["Manrope"],
+          "title": ["Manrope"],
+          "headline-md-mobile": ["Manrope"],
+          "display-mobile": ["Manrope"],
+          "label-sm": ["Manrope"],
+          "caption": ["Manrope"],
+          "headline-lg-mobile": ["Manrope"],
+          "display": ["Manrope"],
+          "label-md": ["Manrope"]
+        },
+        "fontSize": {
+          "headline-md": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+          "headline-sm": ["20px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600"}],
+          "headline-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "700"}],
+          "body-md": ["14px", {"lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400"}],
+          "body-lg": ["16px", {"lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "400"}],
+          "title": ["18px", {"lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "600"}],
+          "headline-md-mobile": ["22px", {"lineHeight": "30px", "letterSpacing": "-0.005em", "fontWeight": "600"}],
+          "display-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "700"}],
+          "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+          "caption": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+          "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+          "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+          "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+        }
+      }
+    }
+  }</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-surface-container-low text-on-surface-variant"><div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop h-10 flex items-center justify-between text-caption font-caption"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-secondary text-base">verified_user</span><span class="text-secondary font-label-md text-label-md">醫院專用規格・GMP/ISO13485 國際雙認證</span><span class="hidden sm:inline-block text-outline-variant">|</span><span class="hidden sm:inline-block text-on-surface-variant">衛部醫器廣字第 11209042 號</span></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-2xs text-primary font-label-md text-label-md"><span class="material-symbols-outlined text-base">support_agent</span><span>緊急諮詢專線：+886 0800-888-999</span></div><span class="hidden md:inline-block text-caption font-caption text-secondary">專業醫療客服在線</span></div></div></div><div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop h-20 flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-xl"><a class="flex items-center gap-space-sm" data-path="home" href="#"><div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-sm text-headline-sm shadow-[0_1px_3px_0_rgba(15,23,42,0.04)]"><span class="material-symbols-outlined text-2xl">medical_services</span></div><div class="flex flex-col"><span class="font-title text-title text-on-surface tracking-tight leading-tight">MEDISPEC</span><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Clinical Solutions</span></div></a><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-headline-sm border-b-2 border-primary"><a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors py-space-xs" data-path="product-catalog" href="#">產品目錄</a><a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors py-space-xs" data-path="hospital-procurement" href="#">醫療院所採購</a><a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors py-space-xs" data-path="certification-testing" href="#">認證與檢驗</a><a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors py-space-xs" data-path="about-us" href="#">關於我們</a><a class="text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors py-space-xs" data-path="contact-inquiry" href="#">聯絡購買</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center bg-surface-container-low rounded-lg px-space-sm py-space-xs w-64 lg:w-72 shadow-[0_1px_2px_-1px_rgba(15,23,42,0.02)] focus-within:ring-2 focus-within:ring-primary/20"><span class="material-symbols-outlined text-outline text-lg mr-space-xs">search</span><input class="w-full bg-transparent text-caption font-caption text-on-surface placeholder:text-outline focus:outline-none" placeholder="搜尋醫材型號、許可證字號..." type="text"/></div><div class="flex items-center gap-space-xs"><a class="relative p-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center justify-center" data-path="inquiry-basket" href="#"><span class="material-symbols-outlined text-2xl">clinical_notes</span><span class="absolute top-1 right-1 w-4 h-4 bg-primary text-on-primary rounded-full font-label-sm text-[10px] flex items-center justify-center leading-none">3</span></a><img alt="Profile" class="w-8 h-8 rounded-full object-cover ml-space-xs" src="https://lh3.googleusercontent.com/aida/AEtjO1W-PJ55AI8ns7idvuiJHaMm02Zqv7b5Qy70blvIxZF2PWFpCzfJ8uuHFj0LrfudF97YgARLjtTC2F-KYltBnm_4IE4bcAeI9o32dy5XIMcYzVLVJ8AGJiEHuqz8RyWbv3m9_TW-roWvmCeBEOlayPYGpbNLStFyMhFOF9X2UD8kUbL68SsSPn2061VCOt9rHjTCJE4veakFmvbAHaaXxzy8XqHJt8tKN71Yy97NnlVfQs9yFrVhAeuPsw"/></div></div></div></header><main class="w-full pt-[120px] bg-background min-h-screen"><div class="flex flex-col w-full">
+<!-- Sub-header & Trust Banner -->
+<section class="w-full bg-surface-container-low py-space-xl">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-lg pb-space-lg">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-primary font-label-md text-label-md">
+<span class="material-symbols-outlined text-lg">medical_information</span>
+<span>CLINICAL SUPPLIES CATALOG</span>
 </div>
-
-<!-- Hero -->
-<section id="hero">
-  <div class="hero-bg-text">KURA</div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">精品咖啡 · 職人手藝</div>
-    <h1 class="hero-title">每一杯<em>沉靜</em><br>都是一場旅程</h1>
-    <p class="hero-sub">從產地到杯中，我們追尋那一瞬間<br>香氣、溫度與記憶交會的完美時刻。</p>
-    <a href="#coffees" class="hero-cta">探索咖啡世界</a>
-  </div>
-  <div class="scroll-hint">
-    <div class="scroll-line"></div>
-    SCROLL
-  </div>
-</section>
-
-<!-- Marquee -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="marquee-item">Single Origin</span>
-    <span class="marquee-item">手沖 Pour Over</span>
-    <span class="marquee-item">Espresso</span>
-    <span class="marquee-item">Cold Brew</span>
-    <span class="marquee-item">虹吸 Siphon</span>
-    <span class="marquee-item">Aeropress</span>
-    <span class="marquee-item">職人精神</span>
-    <span class="marquee-item">Single Origin</span>
-    <span class="marquee-item">手沖 Pour Over</span>
-    <span class="marquee-item">Espresso</span>
-    <span class="marquee-item">Cold Brew</span>
-    <span class="marquee-item">虹吸 Siphon</span>
-    <span class="marquee-item">Aeropress</span>
-    <span class="marquee-item">職人精神</span>
-  </div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">專業醫療儀器與防護耗材專區</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+            提供符合台灣衛生福利部醫療器材查驗標準之醫療級監護儀器、呼吸治療、常規量測及高階照護設備，支援各大公私立教學醫院、專科診所與長照機構批量採購。
+          </p>
 </div>
-
-<!-- Coffees -->
-<section id="coffees">
-  <div class="section-inner">
-    <div class="reveal">
-      <div class="section-label">01 — 咖啡豆介紹</div>
-      <h2 class="section-title">探索世界<br>最珍稀的咖啡</h2>
-      <div class="divider"></div>
-    </div>
-    <div class="coffees-grid">
-      <div class="coffee-card reveal reveal-delay-1">
-        <span class="coffee-icon">☕</span>
-        <div class="coffee-origin">Ethiopia · Yirgacheffe</div>
-        <h3 class="coffee-name">衣索比亞<br>耶加雪菲</h3>
-        <p class="coffee-desc">世界精品咖啡的聖地，帶有明亮的茉莉花香與柑橘酸味，尾韻如蜂蜜般圓潤甘甜。每一口都像是置身非洲高原清晨的薄霧之中。</p>
-        <div class="coffee-tags">
-          <span class="tag">花香</span>
-          <span class="tag">柑橘</span>
-          <span class="tag">中度烘焙</span>
-        </div>
-      </div>
-      <div class="coffee-card reveal reveal-delay-2">
-        <span class="coffee-icon">🫖</span>
-        <div class="coffee-origin">Colombia · Huila</div>
-        <h3 class="coffee-name">哥倫比亞<br>慧蘭</h3>
-        <p class="coffee-desc">安地斯山脈的恩賜，豐富的焦糖甜感與黑莓果香完美交融。口感醇厚飽滿，如絲綢般在舌尖緩緩展開，是入門精品咖啡的絕佳選擇。</p>
-        <div class="coffee-tags">
-          <span class="tag">焦糖</span>
-          <span class="tag">莓果</span>
-          <span class="tag">中深烘焙</span>
-        </div>
-      </div>
-      <div class="coffee-card reveal reveal-delay-3">
-        <span class="coffee-icon">✨</span>
-        <div class="coffee-origin">Japan · Kyoto Style</div>
-        <h3 class="coffee-name">京都式<br>冷萃</h3>
-        <p class="coffee-desc">靈感來自日本京都的滴漏水出法，以冰冷清水緩緩萃取長達16小時，帶出咖啡最溫柔的一面——低苦澀、高甜感，如同一首輕盈的俳句。</p>
-        <div class="coffee-tags">
-          <span class="tag">低酸</span>
-          <span class="tag">清甜</span>
-          <span class="tag">冷萃</span>
-        </div>
-      </div>
-      <div class="coffee-card reveal reveal-delay-1">
-        <span class="coffee-icon">🌿</span>
-        <div class="coffee-origin">Panama · Geisha</div>
-        <h3 class="coffee-name">巴拿馬<br>瑰夏</h3>
-        <p class="coffee-desc">咖啡世界的皇冠之珠，稀有而迷人。複雜的香氣層次如同一場感官交響樂——玫瑰、桃子、茉莉交織，酸度優雅，令人難以忘懷。</p>
-        <div class="coffee-tags">
-          <span class="tag">玫瑰</span>
-          <span class="tag">桃子</span>
-          <span class="tag">淺烘焙</span>
-        </div>
-      </div>
-      <div class="coffee-card reveal reveal-delay-2">
-        <span class="coffee-icon">🏔️</span>
-        <div class="coffee-origin">Taiwan · Alishan</div>
-        <h3 class="coffee-name">台灣<br>阿里山</h3>
-        <p class="coffee-desc">雲霧繚繞的高山孕育出的寶藏，帶有台灣高山茶的清雅韻味與堅果香氣，甜感持久綿長。這是一杯讓你驕傲的台灣之味。</p>
-        <div class="coffee-tags">
-          <span class="tag">茶感</span>
-          <span class="tag">堅果</span>
-          <span class="tag">中烘焙</span>
-        </div>
-      </div>
-      <div class="coffee-card reveal reveal-delay-3">
-        <span class="coffee-icon">🌊</span>
-        <div class="coffee-origin">Brazil · Cerrado</div>
-        <h3 class="coffee-name">巴西<br>塞拉多</h3>
-        <p class="coffee-desc">巴西最大的精品咖啡產區，以穩定而厚實的口感聞名。濃郁的巧克力與榛果香氣是義式濃縮的完美基底，為每日的晨間儀式帶來踏實的力量。</p>
-        <div class="coffee-tags">
-          <span class="tag">巧克力</span>
-          <span class="tag">榛果</span>
-          <span class="tag">深烘焙</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Trust Badges -->
+<div class="flex flex-wrap items-center gap-space-xs">
+<div class="inline-flex items-center gap-space-2xs px-space-sm py-space-xs rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm">verified</span>
+<span>衛福部核准二類醫材</span>
+</div>
+<div class="inline-flex items-center gap-space-2xs px-space-sm py-space-xs rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm">workspace_premium</span>
+<span>ISO 13485品質認證</span>
+</div>
+<div class="inline-flex items-center gap-space-2xs px-space-sm py-space-xs rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-sm">local_shipping</span>
+<span>院所批量直供</span>
+</div>
+</div>
+</div>
+<!-- Category Filter Tabs & Tools -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md pt-space-md">
+<!-- Scrollable Tabs -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-space-2xs no-scrollbar" id="categoryTabContainer">
+<button class="category-btn active-tab px-space-md py-space-xs rounded-lg font-label-md text-label-md bg-primary text-on-primary whitespace-nowrap shadow-sm transition-all" onclick="filterCategory('all', this)">
+            全部產品 (All)
+          </button>
+<button class="category-btn px-space-md py-space-xs rounded-lg font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high whitespace-nowrap transition-all" onclick="filterCategory('monitoring', this)">
+            生理監測設備
+          </button>
+<button class="category-btn px-space-md py-space-xs rounded-lg font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high whitespace-nowrap transition-all" onclick="filterCategory('respiratory', this)">
+            呼吸照護
+          </button>
+<button class="category-btn px-space-md py-space-xs rounded-lg font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high whitespace-nowrap transition-all" onclick="filterCategory('infection', this)">
+            感染控制與耗材
+          </button>
+<button class="category-btn px-space-md py-space-xs rounded-lg font-label-md text-label-md bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high whitespace-nowrap transition-all" onclick="filterCategory('homecare', this)">
+            居家復健照護
+          </button>
+</div>
+<!-- Filter / Search Row -->
+<div class="flex items-center gap-space-sm w-full lg:w-auto">
+<div class="relative flex-1 lg:w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg pointer-events-none">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20" id="modelSearchInput" oninput="handleSearch(this.value)" placeholder="搜尋型號 (例: MP-BP800, MP-MN320)..." type="text"/>
+</div>
+<div class="relative min-w-[140px]">
+<select class="w-full px-3 py-2 bg-surface-container-lowest text-on-surface font-label-md text-label-md rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none pr-8 cursor-pointer" id="priceSortSelect" onchange="handleSort(this.value)">
+<option value="default">預設排序</option>
+<option value="price-asc">價格：由低至高</option>
+<option value="price-desc">價格：由高至低</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline text-lg pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</div>
 </section>
-
-<!-- Brewing -->
-<section id="brewing">
-  <div class="section-inner">
-    <div class="reveal">
-      <div class="section-label">02 — 沖泡方式</div>
-      <h2 class="section-title">沖泡是<br>一門藝術</h2>
-      <div class="divider"></div>
-    </div>
-    <div class="brewing-tabs reveal">
-      <button class="tab-btn active" onclick="switchTab('pourover')">手沖</button>
-      <button class="tab-btn" onclick="switchTab('espresso')">義式濃縮</button>
-      <button class="tab-btn" onclick="switchTab('siphon')">虹吸</button>
-      <button class="tab-btn" onclick="switchTab('aeropress')">愛樂壓</button>
-    </div>
-
-    <div id="pourover" class="tab-content active reveal">
-      <div class="brewing-steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <h4 class="step-title">研磨豆子</h4>
-          <p class="step-desc">使用中粗研磨度，如粗砂糖質感。建議現磨現沖，保留最完整的香氣分子，研磨後5分鐘內使用效果最佳。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <h4 class="step-title">悶蒸注水</h4>
-          <p class="step-desc">以92°C熱水繞圈注入，先用少量水悶蒸30秒，讓咖啡粉充分排氣。這個步驟決定了萃取的均勻程度。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <h4 class="step-title">穩定萃取</h4>
-          <p class="step-desc">以穩定的螺旋手法分段注水，總時間控制在2分30秒至3分鐘。保持注水高度一致，確保每粒咖啡粉都得到平均萃取。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <h4 class="step-title">品味靜待</h4>
-          <p class="step-desc">萃取完成後靜置30秒，讓溫度稍降至飲用最佳溫度約68°C。此時香氣層次最為豐富，從第一口到最後一口體驗細膩的風味變化。</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="espresso" class="tab-content reveal">
-      <div class="brewing-steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <h4 class="step-title">細研磨</h4>
-          <p class="step-desc">義式濃縮需要細緻如麵粉般的研磨度。不同機器、不同豆子需要微調研磨刻度，這是萃取成功的第一關鍵。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <h4 class="step-title">填壓</h4>
-          <p class="step-desc">將咖啡粉填入粉碗，以約20公斤的力道均勻填壓。填壓是否水平直接影響水流路徑與萃取均勻度。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <h4 class="step-title">預浸潤</h4>
-          <p class="step-desc">以低壓預先浸潤咖啡餅約5秒，讓粉末充分吸水膨脹，避免通道效應（Channeling）的發生。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <h4 class="step-title">9bar萃取</h4>
-          <p class="step-desc">以9bar壓力萃取25-30秒，目標萃取量約30ml。觀察Crema的顏色與厚度，是判斷萃取是否完美的視覺指標。</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="siphon" class="tab-content reveal">
-      <div class="brewing-steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <h4 class="step-title">組裝器具</h4>
-          <p class="step-desc">將過濾器固定於上壺，下壺注入適量熱水。虹吸壺如同實驗室器具，每個步驟都需精準，是最具儀式感的沖泡方式。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <h4 class="step-title">加熱上升</h4>
-          <p class="step-desc">以酒精燈或瓦斯爐加熱，下壺水蒸氣壓力將熱水推升至上壺，溫度維持在83-88°C的最佳萃取範圍。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <h4 class="step-title">攪拌萃取</h4>
-          <p class="step-desc">加入研磨好的咖啡粉，以竹棒輕柔攪拌，確保所有粉末與水完全接觸。萃取時間約60-90秒，依個人口味調整。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <h4 class="step-title">回流完成</h4>
-          <p class="step-desc">移除熱源，溫差產生的真空吸力將咖啡液吸回下壺，留下完整的咖啡渣餅。倒出品嚐前，觀察這場美麗的物理魔術。</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="aeropress" class="tab-content reveal">
-      <div class="brewing-steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <h4 class="step-title">預熱濕潤</h4>
-          <p class="step-desc">以熱水預熱愛樂壓各零件，同時濕潤濾紙去除紙味。愛樂壓是旅行者最愛的沖泡器具，輕巧卻能呈現豐富風味。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <h4 class="step-title">加粉注水</h4>
-          <p class="step-desc">倒入中細研磨咖啡粉，注入85°C熱水至刻度2，立即攪拌10圈確保均勻浸潤。水溫較低能萃取出更甜、更柔和的風味。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <h4 class="step-title">等待萃取</h4>
-          <p class="step-desc">靜置浸泡60-90秒。此時間可依個人喜好調整——時間越長，萃取越完整，風味越豐富；時間越短，口感越清爽。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <h4 class="step-title">緩壓出液</h4>
-          <p class="step-desc">蓋上活塞，以穩定均勻的力道慢慢下壓，約20-30秒完成。聽到輕微的嘶聲代表壓榨完成，咖啡精華盡數萃出。</p>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Product Catalog Grid -->
+<section class="w-full py-space-2xl">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop">
+<!-- Active Results Counter & Live Indicator -->
+<div class="flex items-center justify-between pb-space-lg">
+<div class="flex items-center gap-space-2xs text-on-surface-variant font-label-md text-label-md">
+<span>共收錄符合醫療標準產品：</span>
+<span class="text-primary font-bold" id="itemCounter">6</span>
+<span>件項目</span>
+</div>
+<div class="flex items-center gap-space-xs text-caption font-caption text-secondary">
+<span class="inline-block w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span>庫存與許可效期即時校驗通過</span>
+</div>
+</div>
+<!-- 6 Distinct Product Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-xl" id="productGrid">
+<!-- CARD 1 -->
+<article class="product-card flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden" data-category="monitoring" data-model="MP-BP800" data-price="2850" data-title="數位高精度電子血壓計">
+<div class="relative bg-surface-container-low p-space-lg flex items-center justify-center aspect-[4/3] overflow-hidden group">
+<img alt="數位高精度電子血壓計" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300" data-alt="Professional clinical digital upper arm sphygmomanometer medical blood pressure monitor device, clean surgical studio lighting, pure neutral hospital background, ultra sharp product photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByfEgvdsZSX0n0bWfr34k1-c0NqZmosiSHwrJoHNrTHL6VX76bVvdSWYGMxWEWIStejASMcFRM8DzdJpy-4VPKCApodfEQ4LKd1Qk7jsi4BRs9dXy07OgXKz_06YI3fqJTeHO-BIK6BPidmh4Pn6D45T7WLS4i9OwfD06C43uoiOQPvgKsgpJWTwWmJscoOeXJHi8k0HpJLQQ6w-7klfM5MTaWe33ur9ihJRKUAS4I7DseYCL1zQ4"/>
+<span class="absolute top-3 left-3 px-space-sm py-1 bg-surface-container-lowest/90 backdrop-blur text-primary font-label-sm text-label-sm rounded-full shadow-sm">
+              MP-BP800
+            </span>
+<span class="absolute top-3 right-3 px-space-sm py-1 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded-full font-semibold">
+              現貨在庫
+            </span>
+</div>
+<div class="flex flex-col flex-1 p-space-lg gap-space-sm">
+<div class="inline-flex items-center gap-1 text-outline font-caption text-caption">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span>衛部醫器製字第007621號</span>
+</div>
+<h3 class="font-title text-title text-on-surface font-semibold line-clamp-1">數位高精度電子血壓計</h3>
+<span class="text-caption font-caption text-on-surface-variant -mt-1 font-mono">Pro-Precision Digital Sphygmomanometer</span>
+<!-- Usage Instructions -->
+<div class="bg-surface-container-low rounded-lg p-space-sm text-caption font-caption text-on-surface-variant leading-relaxed">
+<div class="flex items-center gap-1 font-label-md text-label-md text-on-surface mb-1">
+<span class="material-symbols-outlined text-base text-primary">info</span>
+<span>臨床操作規範</span>
+</div>
+              綁妥袖帶於左上臂心臟同高處，保持放鬆靜坐5分鐘後單鍵測量。具備心律不整偵測與雙人記憶模式。
+            </div>
+<!-- Technical Spec Pills -->
+<div class="flex flex-col gap-1 text-caption font-caption py-space-xs text-on-surface-variant">
+<div class="flex justify-between py-0.5">
+<span class="text-outline">量測範圍</span>
+<span class="font-medium text-on-surface font-mono">0 - 299 mmHg</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">脈搏範圍</span>
+<span class="font-medium text-on-surface font-mono">40 - 199 次/分</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">連網功能</span>
+<span class="font-medium text-on-surface">藍牙 5.2 智慧傳輸</span>
+</div>
+</div>
+<div class="mt-auto pt-space-sm">
+<div class="flex items-baseline justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="text-outline font-caption text-caption">採購建議單價</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">NT$ 2,850</span>
+</div>
+<span class="text-secondary font-label-sm text-label-sm bg-secondary-container/50 px-2 py-0.5 rounded">院所批發諮詢優惠</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="px-space-xs py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors text-center" onclick="showProductDetails('MP-BP800')">
+                  產品詳細說明
+                </button>
+<button class="px-space-xs py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center justify-center gap-1 shadow-sm" onclick="addToBasket('MP-BP800', '數位高精度電子血壓計')">
+<span class="material-symbols-outlined text-base">add_shopping_cart</span>
+<span>加入採購</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- CARD 2 -->
+<article class="product-card flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden" data-category="monitoring" data-model="MP-MN320-PRO" data-price="48000" data-title="醫院級便攜式多功能生理監視儀">
+<div class="relative bg-surface-container-low p-space-lg flex items-center justify-center aspect-[4/3] overflow-hidden group">
+<img alt="醫院級便攜式多功能生理監視儀" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300" data-alt="Hospital grade patient multi-parameter vital signs monitor with bright color touchscreen display waveforms, sterile ICU ward ambient lighting, high tech medical device photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJWz4tR9iR68LBBjL3T4-Pc_jY2ICxT5ETHQHe1su8HSHYIYRnVyBVMo0Tkj6HzIsuDhbBHL7AfaYxHiy6aYf_ghqAbo87_80BMVNCjyEXLyrm9MN7o_50GHsInfeD2RJGslGFVIk2MeSETTVDldvTXYxSWfrJZloPw0fBOUB3ZrRUQyAi2-ScXt35HRhkztGUOqDEnI-nSXD4V9QI5007i4JVS4R-3peMnL2Q5JckSuiUyqty4nM"/>
+<span class="absolute top-3 left-3 px-space-sm py-1 bg-surface-container-lowest/90 backdrop-blur text-primary font-label-sm text-label-sm rounded-full shadow-sm">
+              MP-MN320-PRO
+            </span>
+<span class="absolute top-3 right-3 px-space-sm py-1 bg-primary text-on-primary font-label-sm text-label-sm rounded-full font-semibold">
+              專業院所專用
+            </span>
+</div>
+<div class="flex flex-col flex-1 p-space-lg gap-space-sm">
+<div class="inline-flex items-center gap-1 text-outline font-caption text-caption">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span>衛部醫器輸字第034198號</span>
+</div>
+<h3 class="font-title text-title text-on-surface font-semibold line-clamp-1">醫院級便攜式多功能生理監視儀</h3>
+<span class="text-caption font-caption text-on-surface-variant -mt-1 font-mono">Multi-Parameter Patient Monitor</span>
+<!-- Usage Instructions -->
+<div class="bg-surface-container-low rounded-lg p-space-sm text-caption font-caption text-on-surface-variant leading-relaxed">
+<div class="flex items-center gap-1 font-label-md text-label-md text-on-surface mb-1">
+<span class="material-symbols-outlined text-base text-primary">info</span>
+<span>臨床操作規範</span>
+</div>
+              適用於重症與門診監測，連接ECG電極導線、SpO2指夾與NIBP管路後開機自動校準。具可自訂警報門檻。
+            </div>
+<!-- Technical Spec Pills -->
+<div class="flex flex-col gap-1 text-caption font-caption py-space-xs text-on-surface-variant">
+<div class="flex justify-between py-0.5">
+<span class="text-outline">螢幕規格</span>
+<span class="font-medium text-on-surface">12.1吋 抗眩彩色觸控螢幕</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">監測導程</span>
+<span class="font-medium text-on-surface">SpO2 / ECG / RESP / TEMP / NIBP</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">續航規格</span>
+<span class="font-medium text-on-surface">8小時 備用大容量鋰電池</span>
+</div>
+</div>
+<div class="mt-auto pt-space-sm">
+<div class="flex items-baseline justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="text-outline font-caption text-caption">標準配備專案價</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">NT$ 48,000</span>
+</div>
+<span class="text-secondary font-label-sm text-label-sm bg-secondary-container/50 px-2 py-0.5 rounded">支持租賃/分期專案</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="px-space-xs py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors text-center" onclick="showProductDetails('MP-MN320-PRO')">
+                  產品詳細說明
+                </button>
+<a class="px-space-xs py-2 rounded-lg bg-tertiary-container text-on-tertiary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center justify-center gap-1 shadow-sm" href="#contact-section">
+<span class="material-symbols-outlined text-base">request_quote</span>
+<span>專人報價諮詢</span>
+</a>
+</div>
+</div>
+</div>
+</article>
+<!-- CARD 3 -->
+<article class="product-card flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden" data-category="respiratory" data-model="MP-NEB50" data-price="3600" data-title="智能超音波霧化給藥呼吸器">
+<div class="relative bg-surface-container-low p-space-lg flex items-center justify-center aspect-[4/3] overflow-hidden group">
+<img alt="智能超音波霧化給藥呼吸器" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300" data-alt="Compact portable handheld medical ultrasonic mesh nebulizer device with fine aerosol vapor, clinical treatment setting, soft blue tones, clean studio equipment rendering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5FSxda56SaSFhgrgjWRBfvxUsV5532CuRuXgIs2vz9V1ybY5XzGl9OyLLn1waAvzDV7UpLQ8u-r5MrreJKw_noJ8IJ1GA7-5hwSQMVT74EQ3QbaELZ8-I_PvPFYnFfBXzkp9qnqsel-NP-dLJjGUWvAN5YyrT6ee11Cgz6cm8g6AzbBN4yiGmJwNVa7mu_8QT1SB_qHNDa9ZcV3iojngQFp6tZq68jtDMBjA1fwuYGY9ELQLmr80"/>
+<span class="absolute top-3 left-3 px-space-sm py-1 bg-surface-container-lowest/90 backdrop-blur text-primary font-label-sm text-label-sm rounded-full shadow-sm">
+              MP-NEB50
+            </span>
+<span class="absolute top-3 right-3 px-space-sm py-1 bg-secondary text-on-secondary font-label-sm text-label-sm rounded-full font-semibold">
+              醫師推薦款
+            </span>
+</div>
+<div class="flex flex-col flex-1 p-space-lg gap-space-sm">
+<div class="inline-flex items-center gap-1 text-outline font-caption text-caption">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span>衛部醫器製字第008912號</span>
+</div>
+<h3 class="font-title text-title text-on-surface font-semibold line-clamp-1">智能超音波霧化給藥呼吸器</h3>
+<span class="text-caption font-caption text-on-surface-variant -mt-1 font-mono">Smart Ultrasonic Mesh Nebulizer</span>
+<!-- Usage Instructions -->
+<div class="bg-surface-container-low rounded-lg p-space-sm text-caption font-caption text-on-surface-variant leading-relaxed">
+<div class="flex items-center gap-1 font-label-md text-label-md text-on-surface mb-1">
+<span class="material-symbols-outlined text-base text-primary">info</span>
+<span>臨床操作規範</span>
+</div>
+              將醫囑定量藥液倒入藥杯密封，含住吸嘴或配戴面罩，深緩呼吸至指示燈熄滅。全機可拆卸高溫清洗消毒。
+            </div>
+<!-- Technical Spec Pills -->
+<div class="flex flex-col gap-1 text-caption font-caption py-space-xs text-on-surface-variant">
+<div class="flex justify-between py-0.5">
+<span class="text-outline">霧化粒徑</span>
+<span class="font-medium text-on-surface font-mono">MMAD &lt; 3 μm 直達肺泡</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">運轉噪音</span>
+<span class="font-medium text-on-surface font-mono">&lt; 25 dB 靜音低干擾</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">電源系統</span>
+<span class="font-medium text-on-surface">掌上型 Type-C 快充規格</span>
+</div>
+</div>
+<div class="mt-auto pt-space-sm">
+<div class="flex items-baseline justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="text-outline font-caption text-caption">公會採購合約價</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">NT$ 3,600</span>
+</div>
+<span class="text-outline font-label-sm text-label-sm">附小兒與成人面罩組</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="px-space-xs py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors text-center" onclick="showProductDetails('MP-NEB50')">
+                  產品詳細說明
+                </button>
+<button class="px-space-xs py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center justify-center gap-1 shadow-sm" onclick="addToBasket('MP-NEB50', '智能超音波霧化給藥呼吸器')">
+<span class="material-symbols-outlined text-base">add_shopping_cart</span>
+<span>加入採購</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- CARD 4 -->
+<article class="product-card flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden" data-category="infection" data-model="MP-OX200" data-price="1450" data-title="醫療用指夾式脈搏血氧濃度計">
+<div class="relative bg-surface-container-low p-space-lg flex items-center justify-center aspect-[4/3] overflow-hidden group">
+<img alt="醫療用指夾式脈搏血氧濃度計" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300" data-alt="Medical fingertip pulse oximeter with clear dual color glowing OLED screen display showing SpO2 99 and pulse rate, clean crisp clinical background lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtIO_utZVBeh22iRkaTke6AqHw-JCbNiuKFKTbyrSlvcn9dgOBjB8t1FeDfyGkgqgM4SySaZjDJ23QULIx22DlXKgoydWhXWHQcCcTuiQLkh_CSkNGIEMXQrm-TzI0880r7Vfhew0U7zpxQF_ekFNMoGxuiYVuZSpbUhzZSQEv9iUyIdai590JnTI7cN4GtXOTFCgXY1kzOoFd7edhMcCQfHvRQmwKoKWnamqSMg0wvV601VE7fzk"/>
+<span class="absolute top-3 left-3 px-space-sm py-1 bg-surface-container-lowest/90 backdrop-blur text-primary font-label-sm text-label-sm rounded-full shadow-sm">
+              MP-OX200
+            </span>
+<span class="absolute top-3 right-3 px-space-sm py-1 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded-full font-semibold">
+              常備防疫專品
+            </span>
+</div>
+<div class="flex flex-col flex-1 p-space-lg gap-space-sm">
+<div class="inline-flex items-center gap-1 text-outline font-caption text-caption">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span>衛部醫器製字第006540號</span>
+</div>
+<h3 class="font-title text-title text-on-surface font-semibold line-clamp-1">醫療用指夾式脈搏血氧濃度計</h3>
+<span class="text-caption font-caption text-on-surface-variant -mt-1 font-mono">Clinical Fingertip Pulse Oximeter</span>
+<!-- Usage Instructions -->
+<div class="bg-surface-container-low rounded-lg p-space-sm text-caption font-caption text-on-surface-variant leading-relaxed">
+<div class="flex items-center gap-1 font-label-md text-label-md text-on-surface mb-1">
+<span class="material-symbols-outlined text-base text-primary">info</span>
+<span>臨床操作規範</span>
+</div>
+              清潔指尖並夾於食指或中指，靜止8秒自動偵測血氧飽和度(SpO2)與脈搏灌注指數(PI)。具有四向旋轉螢幕。
+            </div>
+<!-- Technical Spec Pills -->
+<div class="flex flex-col gap-1 text-caption font-caption py-space-xs text-on-surface-variant">
+<div class="flex justify-between py-0.5">
+<span class="text-outline">顯示技術</span>
+<span class="font-medium text-on-surface">OLED 全彩高對比雙向顯示</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">量測精度</span>
+<span class="font-medium text-on-surface font-mono">SpO2 ±2% (70% - 100%)</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">節能機制</span>
+<span class="font-medium text-on-surface">離手 8 秒自動休眠關機</span>
+</div>
+</div>
+<div class="mt-auto pt-space-sm">
+<div class="flex items-baseline justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="text-outline font-caption text-caption">單位採購售價</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">NT$ 1,450</span>
+</div>
+<span class="text-secondary font-label-sm text-label-sm bg-secondary-container/50 px-2 py-0.5 rounded">10入起享團購價</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="px-space-xs py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors text-center" onclick="showProductDetails('MP-OX200')">
+                  產品詳細說明
+                </button>
+<button class="px-space-xs py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center justify-center gap-1 shadow-sm" onclick="addToBasket('MP-OX200', '醫療用指夾式脈搏血氧濃度計')">
+<span class="material-symbols-outlined text-base">add_shopping_cart</span>
+<span>加入採購</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- CARD 5 -->
+<article class="product-card flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden" data-category="infection" data-model="MP-TH90" data-price="1980" data-title="手持式紅外線醫用額溫與鼓室耳溫槍">
+<div class="relative bg-surface-container-low p-space-lg flex items-center justify-center aspect-[4/3] overflow-hidden group">
+<img alt="手持式紅外線醫用額溫與鼓室耳溫槍" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300" data-alt="Modern ergonomic medical infrared temporal and ear clinical thermometer device, pristine clean laboratory background, precision sensor focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnl7ejr0uAz4__dIMjFNK2FcS_Y4WiwQ5SxINXpngnZXkhmc-bEomWRAPqz6zqJf6KMI-SZwS-qd9HJCmGMCU9oBotWZsq5UNTfqE22kG7vqQHWzmWV8PLEzYNjX0MLA2uoIlPaTLYiydHoyYktlvJjCAZTb9EpZxsM3hSbIaEHP47nB0NsOmwUTBSEeQbH0H2_4_uZ649Llc29EjacjyRBKzha-3KmikynnOBKcjLZjNuoxijDM4"/>
+<span class="absolute top-3 left-3 px-space-sm py-1 bg-surface-container-lowest/90 backdrop-blur text-primary font-label-sm text-label-sm rounded-full shadow-sm">
+              MP-TH90
+            </span>
+<span class="absolute top-3 right-3 px-space-sm py-1 bg-surface-container-high text-primary font-label-sm text-label-sm rounded-full font-semibold">
+              1秒快速測量
+            </span>
+</div>
+<div class="flex flex-col flex-1 p-space-lg gap-space-sm">
+<div class="inline-flex items-center gap-1 text-outline font-caption text-caption">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span>衛部醫器輸字第029815號</span>
+</div>
+<h3 class="font-title text-title text-on-surface font-semibold line-clamp-1">手持式紅外線醫用額溫與鼓室耳溫槍</h3>
+<span class="text-caption font-caption text-on-surface-variant -mt-1 font-mono">Dual-Mode Clinical Thermometer</span>
+<!-- Usage Instructions -->
+<div class="bg-surface-container-low rounded-lg p-space-sm text-caption font-caption text-on-surface-variant leading-relaxed">
+<div class="flex items-center gap-1 font-label-md text-label-md text-on-surface mb-1">
+<span class="material-symbols-outlined text-base text-primary">info</span>
+<span>臨床操作規範</span>
+</div>
+              額溫模式距離眉心1-3公分按壓測量；耳溫模式取下磁吸探頭蓋輕置耳道，蜂鳴提示即測量完成。
+            </div>
+<!-- Technical Spec Pills -->
+<div class="flex flex-col gap-1 text-caption font-caption py-space-xs text-on-surface-variant">
+<div class="flex justify-between py-0.5">
+<span class="text-outline">量測反應時間</span>
+<span class="font-medium text-on-surface font-mono">1.0 秒 極速讀取</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">警示系統</span>
+<span class="font-medium text-on-surface">三色背光發燒發熱預警</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">記錄容量</span>
+<span class="font-medium text-on-surface font-mono">50 組 歷史數值比對記憶</span>
+</div>
+</div>
+<div class="mt-auto pt-space-sm">
+<div class="flex items-baseline justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="text-outline font-caption text-caption">醫護合約優惠價</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">NT$ 1,980</span>
+</div>
+<span class="text-outline font-label-sm text-label-sm">附防塵探頭收納座</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="px-space-xs py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors text-center" onclick="showProductDetails('MP-TH90')">
+                  產品詳細說明
+                </button>
+<button class="px-space-xs py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center justify-center gap-1 shadow-sm" onclick="addToBasket('MP-TH90', '手持式紅外線醫用額溫與鼓室耳溫槍')">
+<span class="material-symbols-outlined text-base">add_shopping_cart</span>
+<span>加入採購</span>
+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- CARD 6 -->
+<article class="product-card flex flex-col bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden" data-category="homecare" data-model="MP-AM400-CARE" data-price="12800" data-title="專業防褥瘡交替式減壓氣墊床">
+<div class="relative bg-surface-container-low p-space-lg flex items-center justify-center aspect-[4/3] overflow-hidden group">
+<img alt="專業防褥瘡交替式減壓氣墊床" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300" data-alt="Hospital clinical alternating pressure air mattress for bedsore prevention laid on care bed frame with quiet digital pump unit, medical photography, clean bright nursing home environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8GQ02-Ba6Z3SJsHo9GA2MBZ6U9CVwI2W6MJeHPrp2ojqK1ey8rC7mR4rtU1dMh3KLuiSvOhZrLwvy2QKDP8zo9PUeK_3TOtx-HNBjUxo5kTiIgKwe7OWUUL3zFKyl0D2vbksaemFC0YUml9xUaBOMEDJPYuU4R2DbY-An7qTk1lX4LNGuNpdXpsuotlPVKfkZv55E54tow9Ow13wFXEJP8UZhDSHDzcXWuViI7CoAqW39vQjWB5Q"/>
+<span class="absolute top-3 left-3 px-space-sm py-1 bg-surface-container-lowest/90 backdrop-blur text-primary font-label-sm text-label-sm rounded-full shadow-sm">
+              MP-AM400-CARE
+            </span>
+<span class="absolute top-3 right-3 px-space-sm py-1 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded-full font-semibold">
+              長照專案補助適用
+            </span>
+</div>
+<div class="flex flex-col flex-1 p-space-lg gap-space-sm">
+<div class="inline-flex items-center gap-1 text-outline font-caption text-caption">
+<span class="material-symbols-outlined text-sm text-secondary">verified</span>
+<span>衛部醫器製字第005120號</span>
+</div>
+<h3 class="font-title text-title text-on-surface font-semibold line-clamp-1">專業防褥瘡交替式減壓氣墊床</h3>
+<span class="text-caption font-caption text-on-surface-variant -mt-1 font-mono">Alternating Pressure Air Mattress System</span>
+<!-- Usage Instructions -->
+<div class="bg-surface-container-low rounded-lg p-space-sm text-caption font-caption text-on-surface-variant leading-relaxed">
+<div class="flex items-center gap-1 font-label-md text-label-md text-on-surface mb-1">
+<span class="material-symbols-outlined text-base text-primary">info</span>
+<span>臨床操作規範</span>
+</div>
+              鋪設於病床或護理床架，氣管快速接頭連接主機，開啟交替循環模式。可依患者體重微調軟硬度壓力旋鈕。
+            </div>
+<!-- Technical Spec Pills -->
+<div class="flex flex-col gap-1 text-caption font-caption py-space-xs text-on-surface-variant">
+<div class="flex justify-between py-0.5">
+<span class="text-outline">氣囊構造</span>
+<span class="font-medium text-on-surface">20管 獨立拆換式TPU環保氣囊</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">幫浦特性</span>
+<span class="font-medium text-on-surface">全天候 24dB 超靜音耐磨泵</span>
+</div>
+<div class="flex justify-between py-0.5">
+<span class="text-outline">安全機制</span>
+<span class="font-medium text-on-surface">配備 CPR 緊急快速洩氣閥</span>
+</div>
+</div>
+<div class="mt-auto pt-space-sm">
+<div class="flex items-baseline justify-between mb-space-sm">
+<div class="flex flex-col">
+<span class="text-outline font-caption text-caption">專案定價</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">NT$ 12,800</span>
+</div>
+<span class="text-secondary font-label-sm text-label-sm bg-secondary-container/50 px-2 py-0.5 rounded">符合輔具補助最高全額</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="px-space-xs py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors text-center" onclick="showProductDetails('MP-AM400-CARE')">
+                  產品詳細說明
+                </button>
+<a class="px-space-xs py-2 rounded-lg bg-secondary text-on-secondary font-label-md text-label-md hover:opacity-95 transition-opacity flex items-center justify-center gap-1 shadow-sm" href="#contact-section">
+<span class="material-symbols-outlined text-base">support</span>
+<span>輔具補助代辦</span>
+</a>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- No Results State -->
+<div class="hidden flex-col items-center justify-center py-space-3xl text-center" id="noResultsState">
+<span class="material-symbols-outlined text-6xl text-outline mb-space-sm">manage_search</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-space-xs">未找到符合搜尋條件的醫療器材</h4>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mb-space-lg">
+          請檢查輸入的型號代碼，或更換產品分類條件。您也可以直接透過下方表單由醫材專員為您調配庫存。
+        </p>
+<button class="px-space-lg py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md" onclick="resetFilters()">
+          重設所有篩選條件
+        </button>
+</div>
+</div>
 </section>
-
-<!-- Masters -->
-<section id="masters">
-  <div class="section-inner">
-    <div class="reveal">
-      <div class="section-label">03 — 咖啡職人</div>
-      <h2 class="section-title">傳承技藝<br>的大師們</h2>
-      <div class="divider"></div>
-    </div>
-    <div class="masters-grid">
-      <div class="master-card reveal reveal-delay-1">
-        <div class="master-header">
-          <div class="master-avatar">☕</div>
-          <div>
-            <div class="master-name">陳宗翰</div>
-            <div class="master-role">Head Roaster · 首席烘豆師</div>
-          </div>
-        </div>
-        <p class="master-quote">「烘焙不是在對抗咖啡豆，而是在與它對話。每一批豆子都有自己的個性，我的工作是幫它找到最美好的表達方式。」</p>
-        <div class="master-fav">最愛沖泡法 — <span>虹吸壺，喜歡那個儀式感</span></div>
-        <br>
-        <div class="master-fav">最愛咖啡豆 — <span>衣索比亞耶加雪菲日曬處理</span></div>
-        <br>
-        <div class="master-fav">每日咖啡量 — <span>5杯，清晨第一杯最神聖</span></div>
-      </div>
-      <div class="master-card reveal reveal-delay-2">
-        <div class="master-header">
-          <div class="master-avatar">🫖</div>
-          <div>
-            <div class="master-name">林佳穎</div>
-            <div class="master-role">Barista Champion · 咖啡師冠軍</div>
-          </div>
-        </div>
-        <p class="master-quote">「我喜歡觀察客人喝下第一口時的表情。那個瞬間，所有的練習、所有的失敗都值得了。咖啡是最真誠的情感語言。」</p>
-        <div class="master-fav">最愛沖泡法 — <span>手沖，控制每個細節</span></div>
-        <br>
-        <div class="master-fav">最愛咖啡豆 — <span>巴拿馬瑰夏水洗處理</span></div>
-        <br>
-        <div class="master-fav">每日咖啡量 — <span>3杯，質重於量</span></div>
-      </div>
-      <div class="master-card reveal reveal-delay-3">
-        <div class="master-header">
-          <div class="master-avatar">✨</div>
-          <div>
-            <div class="master-name">吳大明</div>
-            <div class="master-role">Green Buyer · 生豆採購師</div>
-          </div>
-        </div>
-        <p class="master-quote">「我每年走訪十幾個產地，與農民建立真正的夥伴關係。好的咖啡，從土壤開始。尊重土地，才能尊重這杯咖啡。」</p>
-        <div class="master-fav">最愛沖泡法 — <span>愛樂壓，旅途中的好夥伴</span></div>
-        <br>
-        <div class="master-fav">最愛咖啡豆 — <span>台灣阿里山蜜處理</span></div>
-        <br>
-        <div class="master-fav">每日咖啡量 — <span>4杯，工作就是喝咖啡</span></div>
-      </div>
-    </div>
-  </div>
+<!-- Bottom Contact & Procurement Section (購買聯絡方式) -->
+<section class="w-full bg-surface-container-low py-space-3xl scroll-mt-24" id="contact-section">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop">
+<!-- Section Header -->
+<div class="flex flex-col gap-space-2xs mb-space-2xl">
+<div class="flex items-center gap-space-xs text-primary font-label-md text-label-md">
+<span class="material-symbols-outlined text-base">local_shipping</span>
+<span>INSTITUTION PROCUREMENT &amp; CONSULTING</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">購買與採購聯絡專區</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+          MEDISPEC 配備具備臨床背景之資深醫衛專員，協助醫院標案規劃、診所常備耗材合約、社福長照輔具補助申請，全台均提供合格物流安全送抵與專案安裝教學。
+        </p>
+</div>
+<!-- 3 Columns Architecture -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- Left Column: Procurement Flow (4 Cols) -->
+<div class="lg:col-span-4 flex flex-col bg-surface-container-lowest p-space-xl rounded-xl shadow-sm gap-space-lg">
+<div class="flex items-center gap-space-xs pb-space-xs">
+<span class="material-symbols-outlined text-primary text-2xl">alt_route</span>
+<h3 class="font-title text-title text-on-surface font-semibold">標準採購流程指引</h3>
+</div>
+<div class="flex flex-col gap-space-lg relative">
+<!-- Flow Step 1 -->
+<div class="flex gap-space-md">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                1
+              </div>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">選定型號規格</span>
+<p class="text-caption font-caption text-on-surface-variant leading-relaxed">
+                  瀏覽醫療型錄選定適合之器材編號，確認許可證類別與臨床規格需求。
+                </p>
+</div>
+</div>
+<!-- Flow Step 2 -->
+<div class="flex gap-space-md">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                2
+              </div>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">線上諮詢或來電確認庫存</span>
+<p class="text-caption font-caption text-on-surface-variant leading-relaxed">
+                  透過免付費熱線、LINE 或登記表單，由醫材代表確認即時批號效期與批量現貨庫存。
+                </p>
+</div>
+</div>
+<!-- Flow Step 3 -->
+<div class="flex gap-space-md">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                3
+              </div>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">提供院所/統編報價單</span>
+<p class="text-caption font-caption text-on-surface-variant leading-relaxed">
+                  開立正式機構報價單（載明醫療器材許可證字號、規格保固期限、付款與租賃條件）。
+                </p>
+</div>
+</div>
+<!-- Flow Step 4 -->
+<div class="flex gap-space-md">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                4
+              </div>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">專業物流配送與安裝教學</span>
+<p class="text-caption font-caption text-on-surface-variant leading-relaxed">
+                  符合 GDP 醫療器材冷鏈與精密儀器運送規範，生物醫學工程師實地到院安裝測試並簽署驗收。
+                </p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container rounded-lg p-space-md flex items-center gap-space-sm text-caption font-caption text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-xl shrink-0">verified_user</span>
+<span>所有儀器均附原廠繁體中文操作手冊、原廠保固卡及醫療器材仿單備查聯。</span>
+</div>
+</div>
+<!-- Middle Column: Quick Contact Info (3 Cols) -->
+<div class="lg:col-span-3 flex flex-col bg-surface-container-lowest p-space-xl rounded-xl shadow-sm gap-space-md">
+<div class="flex items-center gap-space-xs pb-space-xs">
+<span class="material-symbols-outlined text-secondary text-2xl">quick_reference_all</span>
+<h3 class="font-title text-title text-on-surface font-semibold">快速聯絡窗口</h3>
+</div>
+<!-- Phone -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-xl mt-0.5">call</span>
+<div class="flex flex-col">
+<span class="text-caption font-caption text-outline">醫療採購免付費專線</span>
+<a class="font-label-md text-label-md text-primary font-bold hover:underline" href="tel:0800888999">0800-888-999</a>
+<span class="text-[11px] font-caption text-on-surface-variant">週一至週五 08:30 - 18:00</span>
+</div>
+</div>
+<!-- LINE -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary text-xl mt-0.5">chat</span>
+<div class="flex flex-col">
+<span class="text-caption font-caption text-outline">官方 LINE 醫療商務諮詢</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">@medicare_pro</span>
+<span class="text-[11px] font-caption text-secondary">專科業務 1 對 1 即時在線對談</span>
+</div>
+</div>
+<!-- Email -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-xl mt-0.5">mail</span>
+<div class="flex flex-col">
+<span class="text-caption font-caption text-outline">業務及公家標案信箱</span>
+<a class="font-caption font-caption text-on-surface font-semibold hover:text-primary break-all" href="mailto:order@medicare-pro.com.tw">order@medicare-pro.com.tw</a>
+</div>
+</div>
+<!-- Physical Showroom -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-lg bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-xl mt-0.5">apartment</span>
+<div class="flex flex-col">
+<span class="text-caption font-caption text-outline">實體展示與體驗中心</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">台大醫學中心對策大樓 1F</span>
+<span class="text-[11px] font-caption text-on-surface-variant">台北市中正區中山南路 7 號</span>
+<span class="text-[11px] font-caption text-outline mt-0.5">提供現場實機試機與工程諮詢</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Consultation Intake Form (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col bg-surface-container-lowest p-space-xl rounded-xl shadow-sm">
+<div class="flex items-center justify-between pb-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-2xl">edit_document</span>
+<h3 class="font-title text-title text-on-surface font-semibold">線上採購 / 詢價登記單</h3>
+</div>
+<span class="text-secondary font-label-sm text-label-sm">24h 內專人回覆</span>
+</div>
+<form class="flex flex-col gap-space-sm" onsubmit="handleFormSubmit(event)">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="clientName">聯絡人姓名 *</label>
+<input class="w-full px-3 py-2 bg-surface-container-low text-on-surface text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20" id="clientName" placeholder="例：陳主任 / 林醫師" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="clientPhone">聯絡電話 *</label>
+<input class="w-full px-3 py-2 bg-surface-container-low text-on-surface text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20" id="clientPhone" placeholder="09XX-XXX-XXX 或市話" required="" type="tel"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="orgName">機構名稱 / 單位</label>
+<input class="w-full px-3 py-2 bg-surface-container-low text-on-surface text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20" id="orgName" placeholder="例：台大醫院 心臟科門診" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="procureType">身分別</label>
+<select class="w-full px-3 py-2 bg-surface-container-low text-on-surface text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer" id="procureType">
+<option value="hospital">公立/教學醫院醫事單位</option>
+<option value="clinic">私立專科診所/檢驗所</option>
+<option value="nursing">長照/安養/護理機構</option>
+<option value="individual">居家照護/個人輔具補助</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="targetModel">洽詢產品型號</label>
+<input class="w-full px-3 py-2 bg-surface-container-low text-on-surface text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20" id="targetModel" placeholder="例如：MP-BP800, MP-MN320-PRO" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="targetQty">預估需求數量</label>
+<input class="w-full px-3 py-2 bg-surface-container-low text-on-surface text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20" id="targetQty" min="1" placeholder="例：5" type="number"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="notes">諮詢備註與特定規格需求</label>
+<textarea class="w-full p-3 bg-surface-container-low text-on-surface text-body-md rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" id="notes" placeholder="請註明是否需統編發票、是否需專人實機展示、長照補助代辦評估或特定交付期限..." rows="3"></textarea>
+</div>
+<div class="flex items-center gap-2 pt-space-xs">
+<input class="rounded text-primary focus:ring-primary cursor-pointer w-4 h-4" id="complianceAgree" required="" type="checkbox"/>
+<label class="text-caption font-caption text-on-surface-variant cursor-pointer" for="complianceAgree">
+                本人已確認所提供之採購資訊均為真實醫療院所或照護需求，並同意 MEDISPEC 業務工程人員依個資法聯繫。
+              </label>
+</div>
+<button class="mt-space-xs w-full py-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center justify-center gap-space-xs shadow-md" type="submit">
+<span class="material-symbols-outlined text-lg">send</span>
+<span>送出採購諮詢單</span>
+</button>
+</form>
+<!-- Form Confirmation Toast -->
+<div class="hidden mt-space-md p-space-md rounded-lg bg-secondary-container text-on-secondary-container text-caption font-caption flex items-center gap-space-xs" id="formSuccessToast">
+<span class="material-symbols-outlined text-lg text-secondary">task_alt</span>
+<span>您的採購諮詢單已成功送出！醫材代表將於 24 小時內與您核對報價。</span>
+</div>
+</div>
+</div>
+</div>
 </section>
-
-<!-- Stories -->
-<section id="stories">
-  <div class="section-inner">
-    <div class="stories-intro reveal">
-      <div class="section-label">04 — 品嚐故事</div>
-      <h2 class="section-title">來自品嚐者<br>的真實聲音</h2>
-      <div class="divider"></div>
-      <p>這裡是給所有愛咖啡的人的園地。無論你是每天一杯的上班族，還是剛踏入精品咖啡世界的新手，你的感受與故事對我們同樣珍貴——這是給職人們最真實的回饋。</p>
-    </div>
-
-    <div class="stories-grid">
-      <div class="story-card reveal reveal-delay-1">
-        <div class="story-quote-mark">"</div>
-        <p class="story-text">第一次喝到耶加雪菲，我以為自己喝的是花草茶。那種茉莉花香讓我整個世界觀都改變了。從此我知道，咖啡不只是咖啡，它是一整個風土的故事。</p>
-        <div class="story-author">
-          <div class="story-dot"></div>
-          <div>
-            <div class="story-name">Mia C.</div>
-            <div class="story-meta">設計師 · 咖啡愛好者三年</div>
-          </div>
-        </div>
-      </div>
-      <div class="story-card reveal reveal-delay-2">
-        <div class="story-quote-mark">"</div>
-        <p class="story-text">我媽媽在家裡總是煮那種很苦的三合一，我一直以為自己不喜歡咖啡。直到在這裡喝了一杯阿里山手沖，那個熟悉的台灣高山茶香，突然讓我鼻酸了。</p>
-        <div class="story-author">
-          <div class="story-dot"></div>
-          <div>
-            <div class="story-name">Kevin L.</div>
-            <div class="story-meta">工程師 · 咖啡轉換期</div>
-          </div>
-        </div>
-      </div>
-      <div class="story-card reveal reveal-delay-3">
-        <div class="story-quote-mark">"</div>
-        <p class="story-text">作為一個曾經在咖啡館工作過的人，我非常挑剔。但這裡的虹吸壺冰鎮了我所有的挑剔——那個清澈度、那個乾淨感，是我喝過最接近夢想的一杯咖啡。</p>
-        <div class="story-author">
-          <div class="story-dot"></div>
-          <div>
-            <div class="story-name">Sarah W.</div>
-            <div class="story-meta">前咖啡師 · 現美食記者</div>
-          </div>
-        </div>
-      </div>
-      <div class="story-card reveal reveal-delay-1">
-        <div class="story-quote-mark">"</div>
-        <p class="story-text">失戀那天，我一個人坐在角落喝了一杯哥倫比亞。不知道為什麼，那個焦糖甜感讓我哭了出來，但哭完之後感覺好多了。謝謝那杯咖啡陪我度過那個下午。</p>
-        <div class="story-author">
-          <div class="story-dot"></div>
-          <div>
-            <div class="story-name">Alex T.</div>
-            <div class="story-meta">學生 · 尋找慰藉的人</div>
-          </div>
-        </div>
-      </div>
-      <div class="story-card reveal reveal-delay-2">
-        <div class="story-quote-mark">"</div>
-        <p class="story-text">帶爸爸來這裡是我做過最正確的決定。他喝了一輩子的黑咖啡，以為精品咖啡就是「貴的」咖啡。看到他第一次皺眉頭、然後慢慢點頭的樣子，值了。</p>
-        <div class="story-author">
-          <div class="story-dot"></div>
-          <div>
-            <div class="story-name">Tina H.</div>
-            <div class="story-meta">建築師 · 咖啡傳教士</div>
-          </div>
-        </div>
-      </div>
-      <div class="story-card reveal reveal-delay-3">
-        <div class="story-quote-mark">"</div>
-        <p class="story-text">我從東京特別飛來喝冷萃。朋友說我瘋了，但當咖啡入口的那一刻，那個清甜與深邃同時存在的感覺——是的，我不後悔這趟旅程。</p>
-        <div class="story-author">
-          <div class="story-dot"></div>
-          <div>
-            <div class="story-name">Yuki M.</div>
-            <div class="story-meta">咖啡獵人 · 來自東京</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Submit Form -->
-    <div class="story-submit reveal">
-      <h3>分享你的咖啡故事</h3>
-      <p>每一個故事都是給職人們最珍貴的靈感。告訴我們，那杯咖啡帶給你什麼？</p>
-      <div class="submit-form">
-        <input type="text" id="nameInput" placeholder="你的名字或匿名" />
-        <input type="text" id="roleInput" placeholder="你的身份（例：上班族、學生、旅行者...）" />
-        <textarea id="storyInput" rows="5" placeholder="寫下你的咖啡故事..."></textarea>
-        <button class="submit-btn" onclick="submitStory()">送出故事</button>
-        <div class="success-msg" id="successMsg">✦ 謝謝你的故事，我們的職人們會細心閱讀每一個字。</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer>
-  <div class="footer-logo">KURA COFFEE</div>
-  <p style="margin-top: 0.5rem;">職人精神 · 從產地到杯中</p>
-  <p style="margin-top: 1.5rem; opacity: 0.4;">© 2025 Kura Coffee. All rights reserved.</p>
-</footer>
-
+<!-- Product Detail Modal (High-Level Clinical Precision Interface) -->
+<div aria-labelledby="modalTitle" aria-modal="true" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-6" id="productDetailModal" role="dialog">
+<!-- Backdrop -->
+<div class="fixed inset-0 bg-inverse-surface/60 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
+<!-- Modal Dialog Window -->
+<div class="relative w-full max-w-4xl bg-surface-container-lowest rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] z-10 scale-95 transition-transform duration-300 border border-outline-variant/30" id="modalContainer">
+<!-- Modal Header -->
+<div class="px-space-lg sm:px-space-xl py-space-md bg-surface-container-low border-b border-outline-variant/30 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-2xl">medical_services</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-caption font-caption text-primary font-mono font-semibold" id="modalModelTag">MP-BP800</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="inline-flex items-center gap-1 text-[11px] font-label-sm text-secondary bg-secondary-container/60 px-2 py-0.5 rounded-full font-semibold" id="modalStatusBadge">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span id="modalStatusText">衛福部合格醫材</span>
+</span>
+</div>
+<h3 class="font-title text-title text-on-surface font-bold tracking-tight line-clamp-1" id="modalTitle">數位高精度電子血壓計</h3>
+</div>
+</div>
+<button aria-label="關閉視窗" class="w-9 h-9 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center justify-center shrink-0 ml-2" onclick="closeModal()">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+<!-- Modal Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-space-lg sm:p-space-xl flex flex-col gap-space-lg">
+<!-- Top Overview: Photo & Essential Regulatory Data -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-lg items-start">
+<!-- Left: Product Image Box -->
+<div class="md:col-span-5 bg-surface-container-low rounded-xl p-space-lg flex flex-col items-center justify-center border border-outline-variant/20 relative group">
+<div class="w-full aspect-[4/3] flex items-center justify-center overflow-hidden">
+<img alt="產品大圖" class="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105" id="modalImage" src=""/>
+</div>
+<div class="w-full pt-3 mt-2 border-t border-outline-variant/30 flex items-center justify-between text-caption font-caption text-outline">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-primary">verified</span> GMP / ISO 雙認證</span>
+<span class="font-mono text-[11px]">S/N 原廠條碼檢核</span>
+</div>
+</div>
+<!-- Right: Primary Regulatory & Pricing Highlights -->
+<div class="md:col-span-7 flex flex-col gap-space-sm justify-between h-full">
+<div class="flex flex-col gap-space-xs">
+<div class="inline-flex items-center gap-1.5 text-secondary font-label-md text-label-md bg-secondary-container/40 border border-secondary-container px-3 py-1 rounded-lg w-fit">
+<span class="material-symbols-outlined text-base">health_and_safety</span>
+<span class="font-medium" id="modalCertTag">衛部醫器製字第007621號</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mt-1" id="modalEnglishName">
+              Pro-Precision Clinical Digital Sphygmomanometer
+            </p>
+<p class="text-caption font-caption text-on-surface-variant leading-relaxed bg-surface-container-low/80 p-3 rounded-lg border-l-2 border-primary" id="modalScope">
+              臨床適用範疇：適用於各級醫療院所門診測量、住院病房常規生命體徵監測，以及長照機構日常照護數據採集。
+            </p>
+</div>
+<!-- Price & Contract Terms Pill -->
+<div class="bg-surface-container rounded-xl p-space-md flex items-center justify-between mt-space-xs">
+<div class="flex flex-col">
+<span class="text-caption font-caption text-outline">醫療機構公定採購價 / 專案價</span>
+<span class="font-headline-md text-headline-md text-primary font-bold" id="modalPrice">NT$ 2,850</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">院所批發專案適用</span>
+<span class="text-[11px] font-caption text-secondary mt-0.5">附二年原廠儀校保固</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Tabbed or Structured Clinical Details -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-md pt-2">
+<!-- Clinical Instruction Guidelines -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs border border-outline-variant/20">
+<div class="flex items-center gap-2 text-on-surface font-label-md text-label-md pb-1 border-b border-outline-variant/30">
+<span class="material-symbols-outlined text-primary text-lg">clinical_notes</span>
+<span>臨床操作標準作業指引 (SOP)</span>
+</div>
+<div class="flex flex-col gap-2 pt-1 text-caption font-caption text-on-surface-variant leading-relaxed" id="modalInstructionsList">
+<!-- Dynamic instructions appended -->
+</div>
+</div>
+<!-- Technical Specification Matrix -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs border border-outline-variant/20">
+<div class="flex items-center gap-2 text-on-surface font-label-md text-label-md pb-1 border-b border-outline-variant/30">
+<span class="material-symbols-outlined text-secondary text-lg">tune</span>
+<span>核心精密硬體規格項目</span>
+</div>
+<div class="flex flex-col divide-y divide-outline-variant/20 text-caption font-caption" id="modalSpecsTable">
+<!-- Dynamic specs appended -->
+</div>
+</div>
+</div>
+<!-- Packaging Accessories & Maintenance Assurance -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-space-md grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-primary text-xl mt-0.5">inventory_2</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">標準出廠包裝配件</span>
+<span class="text-caption font-caption text-on-surface-variant leading-relaxed" id="modalAccessories">
+              主機本體、原廠抗菌充氣袖帶(22-42cm)、USB-C供電變壓器、收納防震包、繁體中文臨床仿單說明書、原廠校正報告書。
+            </span>
+</div>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-xl mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">保固與合規校驗服務</span>
+<span class="text-caption font-caption text-on-surface-variant leading-relaxed" id="modalWarranty">
+              全機原廠保固24個月，提供每年免費回廠醫工感測器校正乙次，完全符合衛福部GDP醫材運銷規範及二級醫材法規條款。
+            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Action Footer -->
+<div class="px-space-lg sm:px-space-xl py-space-md bg-surface-container border-t border-outline-variant/30 flex flex-wrap items-center justify-between gap-space-sm shrink-0">
+<!-- Secondary Actions: Regulatory PDF Download -->
+<button class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:text-primary hover:bg-surface-container-high font-label-md text-label-md transition-colors border border-outline-variant/30" onclick="simulateDownloadLeaflet()">
+<span class="material-symbols-outlined text-lg text-primary">picture_as_pdf</span>
+<span>下載衛福部核准仿單 (PDF)</span>
+</button>
+<!-- Primary Action Buttons -->
+<div class="flex items-center gap-space-xs ml-auto">
+<button class="px-space-md py-2 rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" onclick="closeModal()">
+          關閉視窗
+        </button>
+<button class="px-space-md py-2 rounded-lg bg-tertiary-container text-on-tertiary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-1 shadow-sm" onclick="inquireFromModal()">
+<span class="material-symbols-outlined text-base">request_quote</span>
+<span>專人諮詢報價</span>
+</button>
+<button class="px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors flex items-center gap-1 shadow-sm" onclick="addBasketFromModal()">
+<span class="material-symbols-outlined text-base">add_shopping_cart</span>
+<span>加入採購清單</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Micro Interaction Toast -->
+<div class="fixed bottom-6 right-6 z-50 hidden bg-inverse-surface text-inverse-on-surface px-space-lg py-space-md rounded-xl shadow-xl flex items-center gap-space-sm transition-all duration-300" id="cartToast">
+<span class="material-symbols-outlined text-secondary-fixed text-xl">check_circle</span>
+<span class="text-caption font-caption" id="cartToastText">已加入採購詢價清單</span>
+</div>
+<!-- Interactive JavaScript -->
 <script>
-  // Cursor
-  const cursor = document.getElementById('cursor');
-  const cursorTrail = document.getElementById('cursorTrail');
-  let mouseX = 0, mouseY = 0, trailX = 0, trailY = 0;
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let sortMode = 'default';
 
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.style.left = mouseX - 6 + 'px';
-    cursor.style.top = mouseY - 6 + 'px';
-  });
+    // Comprehensive product database for clinical details modal
+    const productDatabase = {
+      'MP-BP800': {
+        model: 'MP-BP800',
+        title: '數位高精度電子血壓計',
+        englishName: 'Pro-Precision Clinical Digital Sphygmomanometer',
+        category: '生理監測設備',
+        certNumber: '衛部醫器製字第007621號',
+        status: '現貨在庫・常備供貨',
+        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuByfEgvdsZSX0n0bWfr34k1-c0NqZmosiSHwrJoHNrTHL6VX76bVvdSWYGMxWEWIStejASMcFRM8DzdJpy-4VPKCApodfEQ4LKd1Qk7jsi4BRs9dXy07OgXKz_06YI3fqJTeHO-BIK6BPidmh4Pn6D45T7WLS4i9OwfD06C43uoiOQPvgKsgpJWTwWmJscoOeXJHi8k0HpJLQQ6w-7klfM5MTaWe33ur9ihJRKUAS4I7DseYCL1zQ4',
+        price: 'NT$ 2,850',
+        scope: '臨床適用範疇：適用於公私立醫院門診體徵量測、病房交班常規監測、健檢中心大量篩檢與長照日間照護日常健康管控。',
+        instructions: [
+          '量測前請受測者於安靜舒適環境靜坐放鬆 5 分鐘，避免飲用咖啡或激烈運動。',
+          '將專用抗敏壓脈帶平整纏繞於左上臂，下緣距離手肘折痕約 1-2 公分，高度維持與心臟齊平。',
+          '單鍵啟動自動加壓，加壓過程請保持放鬆靜止不說話，儀器將自動偵測動脈脈衝與心律規律度。',
+          '量測完畢螢幕自動顯示收縮壓、舒張壓、脈搏次數與心律不整警示圖示，並自動同步上傳藍牙紀錄。'
+        ],
+        specs: [
+          { label: '測量方式', value: '示波振幅法 (Oscillometric Method)' },
+          { label: '壓力測量範圍', value: '0 ~ 299 mmHg (精度 ±3 mmHg 以內)' },
+          { label: '脈搏測量範圍', value: '40 ~ 199 bpm (精度 ±5% 讀數以內)' },
+          { label: '記憶體容量', value: '雙使用者各 120 組歷史記錄及平均值分析' },
+          { label: '通訊介面', value: 'Bluetooth Low Energy (BLE 5.2) 智慧連線' },
+          { label: '供電規格', value: 'AA 鹼性電池 4 顆 或 Type-C 5V/1A 電源供應' }
+        ],
+        accessories: '主機本體、原廠標準型/加大抗菌袖帶(22-42cm)、USB-C供電變壓器、防潑水專用保護收納盒、繁體中文操作手冊與合格證書。',
+        warranty: '全機提供原廠 2 年硬體保固，每年享 1 次原廠精密壓力計校驗認證貼紙服務。'
+      },
+      'MP-MN320-PRO': {
+        model: 'MP-MN320-PRO',
+        title: '醫院級便攜式多功能生理監視儀',
+        englishName: 'Multi-Parameter Clinical Patient Monitor (ICU / ER Grade)',
+        category: '生理監測設備',
+        certNumber: '衛部醫器輸字第034198號',
+        status: '專業院所專用・原廠調度',
+        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDJWz4tR9iR68LBBjL3T4-Pc_jY2ICxT5ETHQHe1su8HSHYIYRnVyBVMo0Tkj6HzIsuDhbBHL7AfaYxHiy6aYf_ghqAbo87_80BMVNCjyEXLyrm9MN7o_50GHsInfeD2RJGslGFVIk2MeSETTVDldvTXYxSWfrJZloPw0fBOUB3ZrRUQyAi2-ScXt35HRhkztGUOqDEnI-nSXD4V9QI5007i4JVS4R-3peMnL2Q5JckSuiUyqty4nM',
+        price: 'NT$ 48,000',
+        scope: '臨床適用範疇：適用於急診重症急救室(ER)、加護病房(ICU)、手術恢復室(PACU)、內視鏡檢查中心與院際病患轉運車輛。',
+        instructions: [
+          '安置於病床專用抗震快拆支架，並確認接地電源及備用鋰電池電量充足。',
+          '正確黏貼五導程 ECG 心電電極貼片、接駁血氧(SpO2)指夾探頭與適當管徑之非侵入性血壓(NIBP)壓脈管。',
+          '開機後儀器將執行 3 秒內部感測模組自檢，確認波形基準線穩定後依患者年齡類別選取「成人/小兒/新生兒」模式。',
+          '可依臨床照護指引設定上下限警報門檻，具備聲光三重警示與可自訂護理站中央工作站連線通報。'
+        ],
+        specs: [
+          { label: '顯示螢幕', value: '12.1 吋高解析防眩彩色電容觸控螢幕 (支援波形同屏 8 軌)' },
+          { label: '監測參數', value: 'Standard: ECG, RESP, SpO2, NIBP, Dual-TEMP, PR' },
+          { label: '擴充支援', value: '可擴充 EtCO2 呼氣末二氧化碳、雙通道侵入性動脈壓(IBP)' },
+          { label: '資料傳輸', value: 'RJ-45 乙太網、Wi-Fi 雙頻、標準 HL7 醫院 HIS/PACS 介接' },
+          { label: '電池續航', value: '大容量充電式鋰電池，連續工作續航時間 ≥ 8 小時' },
+          { label: '警報系統', value: '360 度頂置雙色生理警報燈，符合 IEC 60601-1-8 規範' }
+        ],
+        accessories: '主機、5導程ECG訊號線、成人重複使用型SpO2血氧探頭、無乳膠NIBP袖帶(含連接導管)、體溫體表探頭、醫用接地線與繁體中文手冊。',
+        warranty: '提供原廠 3 年保固、提供定檢校正與軟體免費升級，生物醫學工程師實地到院安裝測試並簽署驗收。'
+      },
+      'MP-NEB50': {
+        model: 'MP-NEB50',
+        title: '智能超音波霧化給藥呼吸器',
+        englishName: 'Smart Ultrasonic Mesh Aerosol Inhalation Nebulizer',
+        category: '呼吸照護',
+        certNumber: '衛部醫器製字第008912號',
+        status: '專科醫師推薦款',
+        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB5FSxda56SaSFhgrgjWRBfvxUsV5532CuRuXgIs2vz9V1ybY5XzGl9OyLLn1waAvzDV7UpLQ8u-r5MrreJKw_noJ8IJ1GA7-5hwSQMVT74EQ3QbaELZ8-I_PvPFYnFfBXzkp9qnqsel-NP-dLJjGUWvAN5YyrT6ee11Cgz6cm8g6AzbBN4yiGmJwNVa7mu_8QT1SB_qHNDa9ZcV3iojngQFp6tZq68jtDMBjA1fwuYGY9ELQLmr80',
+        price: 'NT$ 3,600',
+        scope: '臨床適用範疇：適用於氣喘發作、慢性阻塞性肺疾病(COPD)、小兒支氣管炎、囊腫性纖維化之吸入性藥物氣化遞送治療。',
+        instructions: [
+          '依照專科醫師開立之處方劑量，打開頂部無菌藥杯蓋將定量藥液注入，緊閉密封蓋以防滲漏。',
+          '可依病患使用習慣選擇裝配咬嘴或是醫療級無毒貼面罩，保持直立或傾斜不大於 45 度操作。',
+          '輕按電源開關，微孔網篩震盪產生冷霧，請指示患者深沉呼吸慢吐氣直至藥液耗盡自動斷電。',
+          '使用後請以醫療純水運轉 30 秒沖洗微孔網篩，藥杯及面罩可高溫拆解清洗或以 75% 酒精消毒。'
+        ],
+        specs: [
+          { label: '氣霧粒徑 (MMAD)', value: '中位粒徑 MMAD < 3.0 μm (直達支氣管末端與肺泡區)' },
+          { label: '霧化速率', value: '≥ 0.25 mL/min (給藥精準高效)' },
+          { label: '藥杯容積', value: '最高容量 10 mL，殘留藥液量 ≤ 0.1 mL (極低浪費)' },
+          { label: '運轉噪音', value: '< 25 dB 超靜音超音波網篩震盪' },
+          { label: '超音波頻率', value: '110 kHz ± 10 kHz 高頻鈦合金微孔網片' },
+          { label: '電源系統', value: '內建聚合物鋰電池，Type-C 充電，每次充滿可運作 120 分鐘' }
+        ],
+        accessories: '便攜型霧化器主體、成人用軟矽膠面罩、小兒面罩、符合人體工學吸嘴、防塵保護收納蓋、Type-C充電線、隨行絨布袋。',
+        warranty: '主機原廠保固 2 年，霧化藥杯組為醫療個人接觸耗件建議每 6-12 個月更換，享有耗材折扣採購保障。'
+      },
+      'MP-OX200': {
+        model: 'MP-OX200',
+        title: '醫療用指夾式脈搏血氧濃度計',
+        englishName: 'Clinical Fingertip Pulse Oximeter with Plethysmogram',
+        category: '感染控制與耗材',
+        certNumber: '衛部醫器製字第006540號',
+        status: '常備防疫專品・現貨',
+        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBtIO_utZVBeh22iRkaTke6AqHw-JCbNiuKFKTbyrSlvcn9dgOBjB8t1FeDfyGkgqgM4SySaZjDJ23QULIx22DlXKgoydWhXWHQcCcTuiQLkh_CSkNGIEMXQrm-TzI0880r7Vfhew0U7zpxQF_ekFNMoGxuiYVuZSpbUhzZSQEv9iUyIdai590JnTI7cN4GtXOTFCgXY1kzOoFd7edhMcCQfHvRQmwKoKWnamqSMg0wvV601VE7fzk',
+        price: 'NT$ 1,450',
+        scope: '臨床適用範疇：適用於呼吸道感染照護、家庭健康自主量測、登山高原缺氧監控、復健心肺運動耐受力評估。',
+        instructions: [
+          '檢視受測者指尖，確保無指甲油、指甲貼片或冰冷末梢微循環不良情況（可先搓熱手指）。',
+          '輕按儀器尾部彈簧開啟指夾，將食指或中指完全伸入感測橡膠襯墊到底。',
+          '靜止平放約 8 秒，螢幕即時顯示精準 SpO2 數值、脈搏心率及灌注指數 (PI%)。',
+          '具有 4 向視角自適應按鈕，手指離開後 8 秒啟動智能省電自動關機。'
+        ],
+        specs: [
+          { label: '血氧測量範圍', value: 'SpO2 70% ~ 100% (臨床精度 ±2% 於正常段)' },
+          { label: '脈搏測量範圍', value: '30 ~ 250 bpm (精度 ±2 bpm 或 ±2%)' },
+          { label: '灌注指數 (PI)', value: '0.2% ~ 20.0% 脈搏微循環訊號強度' },
+          { label: '螢幕顯示', value: '高對比雙色 OLED 顯示螢幕，含血流脈波柱狀圖及容積波形' },
+          { label: '防水等級', value: 'IP22 防滴防塵醫用等級外殼' },
+          { label: '續航能力', value: 'AAA 鹼性電池 2 顆，連續監測時間達 30 小時以上' }
+        ],
+        accessories: '血氧濃度計主機、掛頸式抗拉防掉吊繩、抗衝擊矽膠保護套、收納保護盒、AAA原廠醫療電磁鹼性電池2顆、說明書。',
+        warranty: '原廠硬體保固 18 個月，全台合格物流快速配送，提供檢測不合格換新服務承諾。'
+      },
+      'MP-TH90': {
+        model: 'MP-TH90',
+        title: '手持式紅外線醫用額溫與鼓室耳溫槍',
+        englishName: 'Dual-Mode Clinical Infrared Temporal & Tympanic Thermometer',
+        category: '感染控制與耗材',
+        certNumber: '衛部醫器輸字第029815號',
+        status: '極速 1 秒測量・醫護首選',
+        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDnl7ejr0uAz4__dIMjFNK2FcS_Y4WiwQ5SxINXpngnZXkhmc-bEomWRAPqz6zqJf6KMI-SZwS-qd9HJCmGMCU9oBotWZsq5UNTfqE22kG7vqQHWzmWV8PLEzYNjX0MLA2uoIlPaTLYiydHoyYktlvJjCAZTb9EpZxsM3hSbIaEHP47nB0NsOmwUTBSEeQbH0H2_4_uZ649Llc29EjacjyRBKzha-3KmikynnOBKcjLZjNuoxijDM4',
+        price: 'NT$ 1,980',
+        scope: '臨床適用範疇：適用於醫院門禁體溫初篩、兒科小兒發熱監測、長照中心常態例行量測與一般家庭健康體溫記錄。',
+        instructions: [
+          '額溫模式：對準受測者前額眉心正中央，保持距離 1 至 3 公分，輕按測量鍵 1 秒即發出提示音。',
+          '耳溫模式：取下磁吸式額溫蓋自動切換為耳溫探頭模式，將探頭輕柔置入耳道深入鼓膜方向按壓測量。',
+          '螢幕具有智能三色背光提示：綠色(正常體溫 34.0-37.3℃)、橙色(微熱警惕 37.4-37.9℃)、紅色(高熱發燒 ≥38.0℃)。',
+          '每次測量耳溫後建議以醫療酒精棉片輕拭探頭鏡片，確保紅外線感測透鏡維持無油脂清潔狀態。'
+        ],
+        specs: [
+          { label: '感測晶片', value: '德國進口超高靈敏紅外線熱電堆感測器 (Heimann Sensor)' },
+          { label: '測量精度', value: '人體模式 ±0.2℃ (35.0℃ ~ 42.0℃ 區間)' },
+          { label: '反應時間', value: '極速 1.0 秒測量完成' },
+          { label: '歷史記憶', value: '50 組體溫數據記憶比對，具備發熱警報聲響' },
+          { label: '單位轉換', value: '攝氏 (℃) / 華氏 (℉) 單鍵快速切換' },
+          { label: '多用途測量', value: '支援人體體溫、物體表面溫度及環境室溫三用切換' }
+        ],
+        accessories: '雙模式紅外線體溫計本體、磁吸式額溫探頭蓋、硬質防塵座充底座、防撞布質收納袋、AAA電池2顆、校正卡。',
+        warranty: '原廠保固 2 年，全省據點享有探頭靈敏度免費檢定服務，符合臨床醫療器械嚴謹量測標準。'
+      },
+      'MP-AM400-CARE': {
+        model: 'MP-AM400-CARE',
+        title: '專業防褥瘡交替式減壓氣墊床',
+        englishName: 'Clinical Alternating Pressure Air Mattress System for Ulcer Prevention',
+        category: '居家復健照護',
+        certNumber: '衛部醫器製字第005120號',
+        status: '長照專案補助適用・符合甲類/乙類',
+        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA8GQ02-Ba6Z3SJsHo9GA2MBZ6U9CVwI2W6MJeHPrp2ojqK1ey8rC7mR4rtU1dMh3KLuiSvOhZrLwvy2QKDP8zo9PUeK_3TOtx-HNBjUxo5kTiIgKwe7OWUUL3zFKyl0D2vbksaemFC0YUml9xUaBOMEDJPYuU4R2DbY-An7qTk1lX4LNGuNpdXpsuotlPVKfkZv55E54tow9Ow13wFXEJP8UZhDSHDzcXWuViI7CoAqW39vQjWB5Q',
+        price: 'NT$ 12,800',
+        scope: '臨床適用範疇：適用於長期臥床患者、脊髓損傷、術後復原期、中風臥床、高褥瘡壓瘡風險患者之減壓照護。',
+        instructions: [
+          '將床墊平整鋪設於標準單人病床或居家護理床架，氣管出風端置於床尾位置。',
+          '將主機幫浦懸掛於床尾護欄，連接雙出氣導管快速公母接頭，插上接地電源。',
+          '初次充氣請將壓力旋鈕轉至最大，啟動 15 分鐘待 20 管氣囊充飽後，依患者體重(40-140kg)調整合適軟硬度。',
+          '緊急狀況需施行 CPR 心肺復甦術時，請拉開床頭端「CPR 快速洩氣閥」，氣囊將於 15 秒內完全洩氣貼合床板。'
+        ],
+        specs: [
+          { label: '氣囊結構', value: '20 管 4 吋高彈性 TPU 獨立拆換式圓管 (抗水解環保無毒材質)' },
+          { label: '循環週期', value: 'A-B 雙管路交替循環時間 10 ~ 12 分鐘' },
+          { label: '幫浦特性', value: '全天候連續運轉設計，超靜音耐磨電機 ≤ 24 dB' },
+          { label: '床罩材質', value: '醫療級四向高彈性 PU 防水透濕防塵螨床罩 (耐消毒水擦拭)' },
+          { label: '安全防護', value: '附 CPR 急救洩氣閥、微孔噴氣減濕透氣設計' },
+          { label: '承重上限', value: '安全承重最大達 145 公斤 (符合醫療床規標準)' }
+        ],
+        accessories: '靜音氣泵控制主機、20管TPU氣墊床本體、全包覆防水透氣床罩、防折耐壓連接風管組、CPR急救洩氣閥、維修更換氣管備品。',
+        warranty: '主機幫浦原廠保固 3 年，氣囊本體保固 1 年，提供全台專業到府裝機及代辦衛生福利部長照輔具補助申請核銷。'
+      }
+    };
 
-  function animateTrail() {
-    trailX += (mouseX - trailX) * 0.12;
-    trailY += (mouseY - trailY) * 0.12;
-    cursorTrail.style.left = trailX - 18 + 'px';
-    cursorTrail.style.top = trailY - 18 + 'px';
-    requestAnimationFrame(animateTrail);
-  }
-  animateTrail();
+    function filterCategory(cat, element) {
+      activeCategory = cat;
+      const tabs = document.querySelectorAll('.category-btn');
+      tabs.forEach(tab => {
+        tab.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        tab.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+      });
+      if (element) {
+        element.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+        element.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      }
+      applyFilters();
+    }
 
-  document.querySelectorAll('a, button, .coffee-card, .story-card').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(2.5)');
-    el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
-  });
+    function handleSearch(val) {
+      searchQuery = val.trim().toLowerCase();
+      applyFilters();
+    }
 
-  // Mobile Menu
-  const hamburger = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobileMenu');
-  hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
-  function closeMenu() { mobileMenu.classList.remove('open'); }
+    function handleSort(val) {
+      sortMode = val;
+      applyFilters();
+    }
 
-  // Tabs
-  function switchTab(id) {
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    event.target.classList.add('active');
-  }
+    function resetFilters() {
+      document.getElementById('modelSearchInput').value = '';
+      document.getElementById('priceSortSelect').value = 'default';
+      searchQuery = '';
+      sortMode = 'default';
+      const firstTab = document.querySelector('.category-btn');
+      filterCategory('all', firstTab);
+    }
 
-  // Scroll Reveal
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+    function applyFilters() {
+      const grid = document.getElementById('productGrid');
+      const cards = Array.from(grid.getElementsByClassName('product-card'));
+      const noResults = document.getElementById('noResultsState');
+      let visibleCount = 0;
+
+      // Filter
+      cards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        const model = card.getAttribute('data-model').toLowerCase();
+        const title = card.getAttribute('data-title').toLowerCase();
+
+        const matchesCat = (activeCategory === 'all' || cat === activeCategory);
+        const matchesSearch = (searchQuery === '' || model.includes(searchQuery) || title.includes(searchQuery));
+
+        if (matchesCat && matchesSearch) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      // Sort visible cards
+      if (sortMode === 'price-asc') {
+        cards.sort((a, b) => parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price')));
+      } else if (sortMode === 'price-desc') {
+        cards.sort((a, b) => parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price')));
+      }
+
+      // Re-append sorted
+      cards.forEach(card => grid.appendChild(card));
+
+      // Update counter
+      document.getElementById('itemCounter').textContent = visibleCount;
+
+      if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+        noResults.classList.add('flex');
+      } else {
+        noResults.classList.add('hidden');
+        noResults.classList.remove('flex');
+      }
+    }
+
+    // Modal Operations (Rich Clinical Information)
+    let currentModalModel = '';
+    let currentModalTitle = '';
+
+    function showProductDetails(modelKey) {
+      const p = productDatabase[modelKey];
+      if (!p) return;
+
+      currentModalModel = p.model;
+      currentModalTitle = p.title;
+
+      // Populate Header & Badge
+      document.getElementById('modalModelTag').textContent = p.model;
+      document.getElementById('modalTitle').textContent = p.title;
+      document.getElementById('modalStatusText').textContent = p.status;
+      
+      // Populate Regulatory & Identity
+      document.getElementById('modalCertTag').textContent = p.certNumber;
+      document.getElementById('modalEnglishName').textContent = p.englishName;
+      document.getElementById('modalScope').textContent = p.scope;
+      document.getElementById('modalPrice').textContent = p.price;
+      document.getElementById('modalImage').src = p.image;
+      document.getElementById('modalImage').alt = p.title;
+
+      // Populate Instructions
+      const instructionsContainer = document.getElementById('modalInstructionsList');
+      instructionsContainer.innerHTML = '';
+      p.instructions.forEach((step, index) => {
+        const stepRow = document.createElement('div');
+        stepRow.className = 'flex items-start gap-2.5';
+        stepRow.innerHTML = `
+          <span class="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">${index + 1}</span>
+          <span class="text-on-surface-variant">${step}</span>
+        `;
+        instructionsContainer.appendChild(stepRow);
+      });
+
+      // Populate Technical Specs Table
+      const specsContainer = document.getElementById('modalSpecsTable');
+      specsContainer.innerHTML = '';
+      p.specs.forEach(spec => {
+        const specRow = document.createElement('div');
+        specRow.className = 'py-1.5 flex items-baseline justify-between gap-2';
+        specRow.innerHTML = `
+          <span class="text-outline font-medium shrink-0">${spec.label}</span>
+          <span class="text-on-surface text-right font-medium">${spec.value}</span>
+        `;
+        specsContainer.appendChild(specRow);
+      });
+
+      // Accessories & Warranty
+      document.getElementById('modalAccessories').textContent = p.accessories;
+      document.getElementById('modalWarranty').textContent = p.warranty;
+
+      // Open Modal Animation
+      const modal = document.getElementById('productDetailModal');
+      const container = document.getElementById('modalContainer');
+      modal.classList.remove('hidden');
+      // Trigger animation on next frame
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        container.classList.remove('scale-95');
+        container.classList.add('scale-100');
+      });
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Backward compatibility for generic openModal calls
+    function openModal(model, title, cert, instructions, specs, price) {
+      if (productDatabase[model]) {
+        showProductDetails(model);
+      } else {
+        currentModalModel = model;
+        currentModalTitle = title;
+        document.getElementById('modalModelTag').textContent = model;
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalCertTag').textContent = cert;
+        document.getElementById('modalScope').textContent = instructions;
+        document.getElementById('modalPrice').textContent = price;
+        
+        const modal = document.getElementById('productDetailModal');
+        const container = document.getElementById('modalContainer');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          modal.classList.remove('opacity-0');
+          container.classList.remove('scale-95');
+          container.classList.add('scale-100');
+        });
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('productDetailModal');
+      const container = document.getElementById('modalContainer');
+      modal.classList.add('opacity-0');
+      container.classList.remove('scale-100');
+      container.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 250);
+    }
+
+    // Keyboard ESC to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('productDetailModal');
+        if (!modal.classList.contains('hidden')) {
+          closeModal();
+        }
       }
     });
-  }, { threshold: 0.12 });
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    function inquireFromModal() {
+      closeModal();
+      const modelInput = document.getElementById('targetModel');
+      if (modelInput) {
+        modelInput.value = currentModalModel;
+        modelInput.focus();
+        document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
 
-  // Story Submit
-  function submitStory() {
-    const name = document.getElementById('nameInput').value.trim();
-    const story = document.getElementById('storyInput').value.trim();
-    if (!story) { return; }
-    document.getElementById('nameInput').value = '';
-    document.getElementById('roleInput').value = '';
-    document.getElementById('storyInput').value = '';
-    const msg = document.getElementById('successMsg');
-    msg.style.display = 'block';
-    setTimeout(() => { msg.style.display = 'none'; }, 5000);
-  }
-</script>
-</body>
-</html>
+    function addBasketFromModal() {
+      addToBasket(currentModalModel, currentModalTitle);
+      closeModal();
+    }
+
+    function simulateDownloadLeaflet() {
+      const toast = document.getElementById('cartToast');
+      const toastText = document.getElementById('cartToastText');
+      toastText.textContent = '已下載 ' + currentModalModel + ' 衛生福利部核准中文仿單 (PDF)';
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    // Cart Notification Toast
+    function addToBasket(model, name) {
+      const toast = document.getElementById('cartToast');
+      const toastText = document.getElementById('cartToastText');
+      toastText.textContent = '已將 ' + model + ' (' + name + ') 加入採購詢價清單';
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+
+      // Pre-fill form if empty
+      const targetModelInput = document.getElementById('targetModel');
+      if (targetModelInput && !targetModelInput.value.includes(model)) {
+        if (targetModelInput.value.trim() === '') {
+          targetModelInput.value = model;
+        } else {
+          targetModelInput.value += ', ' + model;
+        }
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const toast = document.getElementById('formSuccessToast');
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        e.target.reset();
+      }, 5000);
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-low text-on-surface-variant pt-space-3xl pb-space-2xl"><div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-2xl pb-space-2xl"><div class="flex flex-col gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-xl">medical_services</span></div><span class="font-title text-title text-on-surface tracking-tight">MEDISPEC 專業醫療</span></div><p class="text-caption font-caption text-on-surface-variant leading-relaxed">專注於高階醫療設備、醫院手術監護系統與專業滅菌耗材。提供全台大型教學醫院、專科診所最值得信賴的合規醫療器械供應方案。</p><div class="flex items-center gap-space-xs text-secondary font-label-md text-label-md"><span class="material-symbols-outlined text-lg">health_and_safety</span><span>衛生福利部第一等級/第二等級醫療器材許可商</span></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface">醫院採購與合作通路</span><div class="flex flex-col gap-space-xs text-body-md font-body-md"><a class="hover:text-primary transition-colors" data-path="hospital-procurement" href="#">公立及教學醫院專案標案</a><a class="hover:text-primary transition-colors" data-path="hospital-procurement" href="#">私立診所長期供裝合約</a><a class="hover:text-primary transition-colors" data-path="certification-testing" href="#">仿單規律與衛署許可查驗</a><a class="hover:text-primary transition-colors" data-path="inquiry-basket" href="#">大宗採購型錄索取</a><a class="hover:text-primary transition-colors" data-path="contact-inquiry" href="#">儀器維護保養 (SLA) 諮詢</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface">核心產品分類目錄</span><div class="flex flex-col gap-space-xs text-body-md font-body-md"><a class="hover:text-primary transition-colors" data-path="product-catalog" href="#">手術室高頻電刀及監護</a><a class="hover:text-primary transition-colors" data-path="product-catalog" href="#">重症加護病房體徵儀器</a><a class="hover:text-primary transition-colors" data-path="product-catalog" href="#">院內低溫滅菌及器械保養</a><a class="hover:text-primary transition-colors" data-path="product-catalog" href="#">臨床生化檢驗試劑耗材</a><a class="hover:text-primary transition-colors" data-path="certification-testing" href="#">ISO / CE / FDA 報告查閱</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface">合規諮詢與客服窗口</span><div class="flex flex-col gap-space-xs text-caption font-caption"><div class="flex items-center gap-space-2xs"><span class="material-symbols-outlined text-primary text-base">call</span><span class="text-on-surface font-label-md text-label-md">+886 0800-888-999</span></div><div class="flex items-center gap-space-2xs"><span class="material-symbols-outlined text-primary text-base">mail</span><span>procurement@medispec-tw.com</span></div><div class="flex items-center gap-space-2xs"><span class="material-symbols-outlined text-primary text-base">location_on</span><span>台北市內湖區行愛路生技園區 188 號 6 樓</span></div><div class="flex items-center gap-space-2xs text-outline"><span class="material-symbols-outlined text-base">schedule</span><span>服務時間：週一至週五 08:30 - 18:00</span></div></div></div></div><div class="pt-space-lg bg-surface-container rounded-xl p-space-lg flex flex-col gap-space-sm text-caption font-caption"><div class="flex flex-wrap items-center justify-between gap-space-sm text-on-surface font-label-md text-label-md"><span>醫療器材監管宣導與免責宣告 (Regulatory Disclaimers)</span><span class="text-outline">許可證有效期限經衛福部系統即時核驗</span></div><p class="text-on-surface-variant leading-relaxed">本網站所刊載之醫療器材資訊，僅供醫療院所從業人員、醫事機構採購人員參考與規格比對之用，非作為一般消費者自我診斷、治療或手術操作指南。特定管制類醫療器材需憑合格醫療院所立案字號或醫師處方箋進行諮詢與出貨。<br/>醫療器材許可證字號：衛部醫器輸字第 034561 號、衛部醫器製字第 012894 號 | 廣告核准字號：衛部醫器廣字第 11209042 號、北市衛器廣字第 11210088 號</p><div class="flex flex-wrap items-center justify-between gap-space-md pt-space-xs text-outline text-[11px]"><span>Copyright © 2024 MEDISPEC Clinical Systems Inc. All Rights Reserved.</span><div class="flex items-center gap-space-md"><a class="hover:text-on-surface transition-colors" data-path="certification-testing" href="#">品質認證證書</a><a class="hover:text-on-surface transition-colors" data-path="about-us" href="#">隱私權政策</a><a class="hover:text-on-surface transition-colors" data-path="hospital-procurement" href="#">採購服務協議</a></div></div></div></div></footer></body></html>
