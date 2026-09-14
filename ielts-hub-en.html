@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS Study Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDEAE1;
+    --card:#FBF9F4;
+    --ink:#211E1A;
+    --ink-soft:#5B584F;
+    --navy:#223250;
+    --navy-tint:#E3E7EE;
+    --stamp:#9C3B3B;
+    --stamp-tint:#F2E2E0;
+    --sage:#4B6357;
+    --sage-tint:#E4E9E2;
+    --line:#D6CFBE;
+    --line-strong:#B9AF97;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:56px 28px 80px;
+  }
+  header{
+    border-bottom:1px solid var(--line-strong);
+    padding-bottom:28px;
+    margin-bottom:32px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  h1{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-weight:600;
+    font-size:34px;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .tagline{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin:0;
+    max-width:38ch;
+  }
+  #search{
+    width:220px;
+    padding:10px 14px;
+    border:1px solid var(--line-strong);
+    border-radius:6px;
+    background:var(--card);
+    font-family:inherit;
+    font-size:14px;
+    color:var(--ink);
+  }
+  #search:focus{
+    outline:none;
+    border-color:var(--navy);
+  }
+  .filters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:36px;
+  }
+  .chip{
+    border:1px solid var(--line-strong);
+    background:transparent;
+    color:var(--ink-soft);
+    padding:7px 16px;
+    border-radius:20px;
+    font-size:14px;
+    font-family:inherit;
+    cursor:pointer;
+    transition:background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .chip:hover{
+    border-color:var(--navy);
+    color:var(--ink);
+  }
+  .chip.active{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:#fff;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:16px;
+  }
+  @media (max-width:640px){
+    .grid{grid-template-columns:1fr;}
+    header{flex-direction:column; align-items:flex-start;}
+    #search{width:100%;}
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+  }
+  .card h3{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-weight:600;
+    font-size:18px;
+    margin:0;
+  }
+  .badge{
+    font-size:11px;
+    padding:3px 9px;
+    border-radius:4px;
+    white-space:nowrap;
+    font-weight:500;
+  }
+  .badge.official{background:var(--navy-tint); color:var(--navy);}
+  .badge.practice{background:var(--sage-tint); color:var(--sage);}
+  .badge.blog{background:var(--stamp-tint); color:var(--stamp);}
+  .card p{
+    margin:0;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    flex:1;
+  }
+  .card-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:4px;
+    border-top:1px solid var(--line);
+    padding-top:12px;
+  }
+  .skills{
+    display:flex;
+    gap:6px;
+  }
+  .skill-tag{
+    font-size:11px;
+    color:var(--ink-soft);
+    border:1px solid var(--line-strong);
+    padding:2px 7px;
+    border-radius:4px;
+  }
+  .card a{
+    font-size:13.5px;
+    color:var(--navy);
+    text-decoration:none;
+    font-weight:500;
+    border-bottom:1px solid var(--navy);
+  }
+  .card a:hover{
+    opacity:0.75;
+  }
+  .note{
+    margin-top:40px;
+    padding:18px 20px;
+    border:1px solid var(--line-strong);
+    border-left:3px solid var(--stamp);
+    border-radius:6px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    background:var(--card);
+  }
+  .note strong{
+    color:var(--ink);
+  }
+  .empty{
+    grid-column:1/-1;
+    text-align:center;
+    color:var(--ink-soft);
+    padding:40px 0;
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>IELTS Study Hub</h1>
+      <p class="tagline">Practice resources for IELTS, sorted by skill and resource type, so you can find what you need right now.</p>
+    </div>
+    <input id="search" type="text" placeholder="Search, e.g. writing, listening…">
+  </header>
+
+  <div class="filters" id="filters">
+    <button class="chip active" data-filter="all">All</button>
+    <button class="chip" data-filter="official">Official</button>
+    <button class="chip" data-filter="practice">Practice tests</button>
+    <button class="chip" data-filter="blog">Blogs and tips</button>
+    <button class="chip" data-filter="listening">Listening</button>
+    <button class="chip" data-filter="reading">Reading</button>
+    <button class="chip" data-filter="writing">Writing</button>
+    <button class="chip" data-filter="speaking">Speaking</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="note">
+    <strong>A note on sources:</strong> There's a lot of unofficial IELTS material online — leaked papers, third-party mock tests, app-based quizzes. Difficulty and accuracy vary a lot. Treat the official resources and the Cambridge IELTS series (1-19) as your main calibration for difficulty, and use the other sites mainly to get familiar with question types rather than trusting their scoring.
+  </div>
+
+</div>
+
+<script>
+const resources = [
+  {
+    name: "IELTS official sample questions",
+    type: "official",
+    typeLabel: "Official",
+    skills: ["listening","reading","writing","speaking"],
+    desc: "Official sample questions from the British Council, IDP, and Cambridge University Press and Assessment, covering Academic, General Training, and UKVI.",
+    url: "https://ielts.org/take-a-test/preparation-resources/sample-test-questions"
+  },
+  {
+    name: "British Council free practice tests",
+    type: "practice",
+    typeLabel: "Practice",
+    skills: ["listening","reading","writing","speaking"],
+    desc: "Free official mock tests with an interface just like the real exam, built from real past questions across all four skills.",
+    url: "https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests"
+  },
+  {
+    name: "IDP IELTS practice tests",
+    type: "practice",
+    typeLabel: "Practice",
+    skills: ["listening","reading","writing","speaking"],
+    desc: "Official practice tests from IDP, useful for getting a feel for the real question formats and difficulty.",
+    url: "https://ielts.idp.com/prepare/all-test-types/all-skills/practice-test"
+  },
+  {
+    name: "British Council LearnEnglish IELTS prep",
+    type: "official",
+    typeLabel: "Official",
+    skills: ["listening","reading","writing","speaking"],
+    desc: "Official courses and materials, including short mock tests and structured study plans for a more systematic approach.",
+    url: "https://learnenglish.britishcouncil.org/ielts-preparation"
+  },
+  {
+    name: "IELTS Liz",
+    type: "blog",
+    typeLabel: "Blog",
+    skills: ["writing","speaking","reading"],
+    desc: "A free IELTS teaching blog with model essays, speaking questions, and strategy tips aimed at band scores 7 to 9.",
+    url: "https://ieltsliz.com/"
+  },
+  {
+    name: "IELTS Simon",
+    type: "blog",
+    typeLabel: "Blog",
+    skills: ["writing","speaking"],
+    desc: "A blog by a former IELTS examiner, focused on high-scoring strategies and sample analysis for Writing Task 1 and 2.",
+    url: "https://www.ielts-simon.com/"
+  },
+  {
+    name: "IELTS Material",
+    type: "practice",
+    typeLabel: "Practice",
+    skills: ["reading","listening","writing"],
+    desc: "A third-party site collecting real past papers and mock tests, useful for high-volume practice to build up speed.",
+    url: "https://ieltsmaterial.com/"
+  }
+];
+
+const skillLabels = {
+  listening: "Listening",
+  reading: "Reading",
+  writing: "Writing",
+  speaking: "Speaking"
+};
+
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('search');
+const chips = document.querySelectorAll('.chip');
+let activeFilter = 'all';
+
+function matchesFilter(item, filter){
+  if(filter === 'all') return true;
+  if(['official','practice','blog'].includes(filter)) return item.type === filter;
+  return item.skills.includes(filter);
+}
+
+function render(){
+  const query = searchInput.value.trim().toLowerCase();
+  const filtered = resources.filter(item => {
+    const filterOk = matchesFilter(item, activeFilter);
+    const searchOk = !query ||
+      item.name.toLowerCase().includes(query) ||
+      item.desc.toLowerCase().includes(query) ||
+      item.typeLabel.toLowerCase().includes(query);
+    return filterOk && searchOk;
+  });
+
+  grid.innerHTML = '';
+
+  if(filtered.length === 0){
+    grid.innerHTML = '<div class="empty">No matching resources. Try a different keyword or category.</div>';
+    return;
+  }
+
+  filtered.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const skillTags = item.skills.map(s => `<span class="skill-tag">${skillLabels[s]}</span>`).join('');
+    card.innerHTML = `
+      <div class="card-top">
+        <h3>${item.name}</h3>
+        <span class="badge ${item.type}">${item.typeLabel}</span>
+      </div>
+      <p>${item.desc}</p>
+      <div class="card-bottom">
+        <div class="skills">${skillTags}</div>
+        <a href="${item.url}" target="_blank" rel="noopener">Visit site</a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    chips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    render();
+  });
+});
+
+searchInput.addEventListener('input', render);
+
+render();
+</script>
+
+</body>
+</html>
