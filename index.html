@@ -280,6 +280,294 @@
     justify-content:space-between;
     align-items:baseline;
   }
+
+  /* ---------- Parking helper ---------- */
+  .sr-only{
+    position:absolute;
+    width:1px; height:1px;
+    overflow:hidden;
+    clip:rect(0 0 0 0);
+    white-space:nowrap;
+  }
+
+  .park-fab{
+    position:fixed;
+    right:clamp(1rem,3vw,1.75rem);
+    bottom:calc(clamp(1rem,3vw,1.75rem) + env(safe-area-inset-bottom,0px));
+    z-index:20;
+    display:inline-flex;
+    align-items:center;
+    gap:.55rem;
+    min-height:52px;
+    padding:0 1.3rem 0 1rem;
+    background:var(--lantern);
+    color:var(--ink-night-deep);
+    border:2px solid var(--ink-night-deep);
+    border-radius:999px;
+    font-family:inherit;
+    font-size:1rem;
+    font-weight:700;
+    line-height:1;
+    cursor:pointer;
+    box-shadow:4px 4px 0 rgba(14,27,48,.35);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .park-fab:hover{
+    transform:translate(-2px,-2px);
+    box-shadow:6px 6px 0 rgba(14,27,48,.35);
+  }
+  .park-fab:focus-visible{
+    outline:3px solid var(--ink-night-deep);
+    outline-offset:3px;
+    box-shadow:0 0 0 3px var(--paper-soft), 4px 4px 0 rgba(14,27,48,.35);
+  }
+  .park-fab svg{ width:22px; height:22px; flex:none; }
+
+  .park-dialog{
+    width:min(520px, calc(100% - 2rem));
+    max-height:88vh;
+    max-height:88dvh;
+    padding:0;
+    overflow-y:auto;
+    background:var(--paper-soft);
+    color:var(--text-on-paper);
+    border:1px solid rgba(28,42,34,.3);
+    border-radius:6px;
+    box-shadow:8px 9px 0 rgba(20,38,63,.25);
+    overscroll-behavior:contain;
+  }
+  .park-dialog::backdrop{ background:rgba(14,27,48,.62); }
+  .park-dialog[open]{ animation:rise .22s ease; }
+  body:has(.park-dialog[open]){ overflow:hidden; }
+
+  .park-head{
+    position:sticky;
+    top:0;
+    z-index:1;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:1rem;
+    padding:1.25rem 1.4rem 1rem;
+    background:var(--ink-night-deep);
+    color:var(--text-on-dark);
+  }
+  .park-head h2{
+    font-family:"Noto Serif TC",serif;
+    font-weight:700;
+    font-size:1.35rem;
+    line-height:1.3;
+    margin:0;
+  }
+  .park-head .en{
+    font-size:.72rem;
+    letter-spacing:.06em;
+    color:var(--text-muted-dark);
+    margin-top:.2rem;
+  }
+  .park-close{
+    flex:none;
+    width:44px; height:44px;
+    margin:-.4rem -.5rem 0 0;
+    display:grid;
+    place-items:center;
+    background:transparent;
+    color:var(--text-on-dark);
+    border:0;
+    border-radius:50%;
+    cursor:pointer;
+  }
+  .park-close:hover{ background:rgba(243,236,217,.12); }
+  .park-close:focus-visible{ outline:2px solid var(--gold); outline-offset:1px; }
+  .park-close svg{ width:20px; height:20px; }
+
+  .park-sec{
+    padding:1.3rem 1.4rem;
+    border-top:1px solid rgba(28,42,34,.14);
+  }
+  .park-sec h3{
+    font-family:"Noto Serif TC",serif;
+    font-weight:700;
+    font-size:1.1rem;
+    margin:0 0 .8rem;
+  }
+  .park-sec p.park-hint{
+    margin:.7rem 0 0;
+    font-size:.82rem;
+    line-height:1.7;
+    color:var(--text-muted-paper);
+  }
+  .park-or{
+    margin:1rem 0;
+    text-align:center;
+    font-size:.82rem;
+    color:var(--text-muted-paper);
+  }
+
+  .park-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.5rem;
+    margin:0 0 1rem;
+    padding:0;
+    border:0;
+  }
+  .park-chips label{ position:relative; display:block; }
+  .park-chips input{
+    position:absolute;
+    inset:0;
+    margin:0;
+    opacity:0;
+    cursor:pointer;
+  }
+  .park-chips span{
+    display:inline-flex;
+    align-items:center;
+    min-height:44px;
+    padding:0 1.05rem;
+    border:1.5px solid var(--ink-night);
+    border-radius:999px;
+    font-size:.95rem;
+    font-weight:500;
+  }
+  .park-chips input:checked + span{
+    background:var(--ink-night);
+    color:var(--text-on-dark);
+  }
+  .park-chips input:focus-visible + span{
+    outline:2px solid var(--ink-night);
+    outline-offset:3px;
+  }
+
+  .park-field{ display:block; margin-bottom:.7rem; }
+  .park-field > span{
+    display:block;
+    margin-bottom:.35rem;
+    font-size:.88rem;
+    font-weight:500;
+  }
+  .park-input{
+    width:100%;
+    min-height:48px;
+    padding:.6rem .8rem;
+    font-family:inherit;
+    font-size:1rem;
+    color:var(--text-on-paper);
+    background:#fff;
+    border:1.5px solid rgba(28,42,34,.45);
+    border-radius:4px;
+  }
+  .park-input:focus-visible{
+    outline:2px solid var(--ink-night);
+    outline-offset:2px;
+  }
+
+  .park-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.55rem;
+    width:100%;
+    min-height:52px;
+    padding:.7rem 1rem;
+    font-family:inherit;
+    font-size:1rem;
+    font-weight:700;
+    line-height:1.3;
+    text-decoration:none;
+    text-align:center;
+    border:1.5px solid var(--ink-night);
+    border-radius:4px;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .park-btn svg{ width:20px; height:20px; flex:none; }
+  .park-btn:hover{
+    transform:translate(-1px,-2px);
+    box-shadow:3px 4px 0 rgba(20,38,63,.18);
+  }
+  .park-btn:focus-visible{
+    outline:2px solid var(--ink-night);
+    outline-offset:3px;
+  }
+  .park-btn.primary{ background:var(--ink-night); color:var(--text-on-dark); }
+  .park-btn.accent{
+    background:var(--lantern);
+    color:var(--ink-night-deep);
+    border-color:var(--ink-night-deep);
+  }
+  .park-btn.ghost{ background:transparent; color:var(--ink-night); }
+
+  .park-status{
+    position:sticky;
+    bottom:0;
+    margin:0;
+    padding:0 1.4rem;
+    font-size:.88rem;
+    line-height:1.7;
+    color:var(--text-muted-paper);
+    background:var(--paper-soft);
+  }
+  .park-status[data-kind="warn"]{ color:var(--lacquer); }
+  .park-status:not(:empty){
+    padding:.8rem 1.4rem;
+    border-top:1px solid rgba(28,42,34,.2);
+  }
+
+  .park-saved{
+    margin:1.3rem 1.4rem 0;
+    padding:1rem 1.1rem 1.1rem;
+    background:rgba(70,112,74,.11);
+    border:1px solid rgba(70,112,74,.55);
+    border-left:5px solid var(--areca);
+    border-radius:4px;
+  }
+  .park-saved[hidden]{ display:none; }
+  .park-saved + .park-sec{ margin-top:1.3rem; }
+  .park-saved h3{
+    font-family:"Noto Serif TC",serif;
+    font-weight:700;
+    font-size:1.1rem;
+    margin:0 0 .35rem;
+  }
+  .park-saved .when{ margin:0; font-size:.9rem; line-height:1.7; }
+  .park-saved .note{
+    margin:.35rem 0 0;
+    font-size:1rem;
+    font-weight:700;
+    line-height:1.6;
+  }
+  .park-saved .note:empty{ display:none; }
+  .park-saved .warn{
+    margin:.5rem 0 0;
+    font-size:.82rem;
+    line-height:1.7;
+    color:var(--text-muted-paper);
+  }
+  .park-saved .warn:empty{ display:none; }
+  .park-saved .row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:.6rem;
+    margin-top:.9rem;
+  }
+  .park-saved .row .park-btn.ghost{ width:auto; padding:.7rem 1.1rem; }
+
+  @media (max-width:560px){
+    .park-dialog{
+      width:100%;
+      max-width:100%;
+      margin:auto 0 0;
+      border-radius:12px 12px 0 0;
+      border-bottom:0;
+    }
+    .park-head{ border-radius:12px 12px 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .park-fab, .park-btn{ transition:none; }
+    .park-fab:hover, .park-btn:hover{ transform:none; }
+    .park-dialog[open]{ animation:none; }
+  }
 </style>
 </head>
 <body>
@@ -430,6 +718,229 @@
     <span>2026</span>
   </div>
 </footer>
+
+<!-- ============ 停車小幫手 ============ -->
+<button class="park-fab" id="parkOpen" type="button" aria-haspopup="dialog" aria-controls="parkDialog">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M10 17V7h3.5a3 3 0 0 1 0 6H10"/></svg>
+  <span>找停車位</span>
+</button>
+
+<dialog class="park-dialog" id="parkDialog" aria-labelledby="parkTitle">
+  <div class="park-head">
+    <div>
+      <h2 id="parkTitle">停車小幫手</h2>
+      <div class="en">Parking Helper</div>
+    </div>
+    <button class="park-close" id="parkClose" type="button" aria-label="關閉">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+  </div>
+
+  <!-- 已記錄的車位（有記錄才顯示） -->
+  <div class="park-saved" id="parkSaved" hidden>
+    <h3>你的車停在這裡</h3>
+    <p class="when" id="parkSavedWhen"></p>
+    <p class="note" id="parkSavedNote"></p>
+    <p class="warn" id="parkSavedWarn"></p>
+    <div class="row">
+      <a class="park-btn accent" id="parkBack" href="#" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>
+        導航回車上
+      </a>
+      <button class="park-btn ghost" id="parkClear" type="button">清除</button>
+    </div>
+  </div>
+
+  <section class="park-sec" aria-labelledby="parkFindTitle">
+    <h3 id="parkFindTitle">找停車位</h3>
+
+    <fieldset class="park-chips">
+      <legend class="sr-only">要找哪一種</legend>
+      <label><input type="radio" name="ptype" value="停車場" checked><span>汽車</span></label>
+      <label><input type="radio" name="ptype" value="機車停車"><span>機車</span></label>
+      <label><input type="radio" name="ptype" value="充電站"><span>電動車充電</span></label>
+    </fieldset>
+
+    <button class="park-btn primary" id="parkNear" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      搜尋我目前位置附近
+    </button>
+
+    <div class="park-or">還沒出發？先查目的地</div>
+
+    <form id="parkDestForm" novalidate>
+      <label class="park-field">
+        <span>景點名稱</span>
+        <input class="park-input" id="parkDest" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="例如：九份老街、日月潭">
+      </label>
+      <button class="park-btn ghost" type="submit">搜尋這個景點附近</button>
+    </form>
+    <p class="park-hint">會在 Google 地圖開啟搜尋結果，可直接看距離、營業時間與導航。</p>
+  </section>
+
+  <section class="park-sec" aria-labelledby="parkSaveTitle">
+    <h3 id="parkSaveTitle">停好了，記下車位</h3>
+    <label class="park-field">
+      <span>位置備註（選填）</span>
+      <input class="park-input" id="parkNote" type="text" maxlength="80" autocomplete="off" placeholder="例如：B2 藍色區、柱子 C12">
+    </label>
+    <button class="park-btn primary" id="parkSave" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>
+      把車停在這裡
+    </button>
+    <p class="park-hint">只會存在這支手機的瀏覽器裡，不會上傳。地下或室內停車場定位可能不準，建議一併填寫樓層與區域。</p>
+  </section>
+
+  <p class="park-status" id="parkStatus" role="status" aria-live="polite"></p>
+</dialog>
+
+<script>
+(function(){
+  var dlg      = document.getElementById('parkDialog');
+  var openBtn  = document.getElementById('parkOpen');
+  var closeBtn = document.getElementById('parkClose');
+  var nearBtn  = document.getElementById('parkNear');
+  var destForm = document.getElementById('parkDestForm');
+  var destIn   = document.getElementById('parkDest');
+  var noteIn   = document.getElementById('parkNote');
+  var saveBtn  = document.getElementById('parkSave');
+  var clearBtn = document.getElementById('parkClear');
+  var statusEl = document.getElementById('parkStatus');
+  var savedBox = document.getElementById('parkSaved');
+  var whenEl   = document.getElementById('parkSavedWhen');
+  var noteEl   = document.getElementById('parkSavedNote');
+  var warnEl   = document.getElementById('parkSavedWarn');
+  var backLink = document.getElementById('parkBack');
+
+  var KEY = 'island-roam:parked-car';
+  var memoryCopy = null; // 瀏覽器不讓存檔時的備援（關閉頁面就會消失）
+
+  function say(msg, kind){
+    statusEl.textContent = msg || '';
+    statusEl.setAttribute('data-kind', kind || '');
+  }
+
+  /* ---- 儲存（所有讀寫都包 try/catch，讀不到就當作沒有記錄） ---- */
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){}
+    return memoryCopy;
+  }
+  function save(rec){
+    memoryCopy = rec;
+    try{ localStorage.setItem(KEY, JSON.stringify(rec)); return true; }
+    catch(e){ return false; }
+  }
+  function wipe(){
+    memoryCopy = null;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+  }
+
+  /* ---- 定位 ---- */
+  function getPos(opts){
+    return new Promise(function(resolve, reject){
+      if(!navigator.geolocation){ reject(new Error('unsupported')); return; }
+      navigator.geolocation.getCurrentPosition(resolve, reject, opts);
+    });
+  }
+  function searchTerm(){
+    var el = document.querySelector('input[name="ptype"]:checked');
+    return el ? el.value : '停車場';
+  }
+  function go(w, url){
+    if(w && !w.closed){ w.location.href = url; }
+    else { window.location.href = url; }
+  }
+
+  /* ---- 搜尋目前位置附近 ---- */
+  nearBtn.addEventListener('click', function(){
+    var term = searchTerm();
+    // 先在點擊當下開好分頁，定位完成後再導過去，避免被瀏覽器擋彈出視窗
+    var w = window.open('about:blank', '_blank');
+    if(w){ try{ w.opener = null; }catch(e){} }
+    say('定位中…');
+    getPos({ enableHighAccuracy:true, timeout:10000, maximumAge:30000 }).then(function(p){
+      var lat = p.coords.latitude, lng = p.coords.longitude;
+      say('');
+      go(w, 'https://www.google.com/maps/search/' + encodeURIComponent(term) + '/@' + lat + ',' + lng + ',17z');
+    }).catch(function(){
+      say('沒有取得定位。已改為直接搜尋「附近' + term + '」，請在地圖裡允許使用目前位置。', 'warn');
+      go(w, 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('附近' + term));
+    });
+  });
+
+  /* ---- 搜尋景點附近 ---- */
+  destForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = destIn.value.trim();
+    if(!name){
+      say('請先輸入景點名稱。', 'warn');
+      destIn.focus();
+      return;
+    }
+    say('');
+    window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + searchTerm()), '_blank', 'noopener');
+  });
+
+  /* ---- 記錄車位 ---- */
+  function fmt(ts){
+    try{
+      return new Date(ts).toLocaleString('zh-TW', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false });
+    }catch(e){ return new Date(ts).toString(); }
+  }
+  function render(){
+    var rec = load();
+    if(!rec){ savedBox.hidden = true; return; }
+    whenEl.textContent = '記錄時間：' + fmt(rec.ts);
+    noteEl.textContent = rec.note || '';
+    warnEl.textContent = rec.acc > 50
+      ? '定位誤差約 ' + rec.acc + ' 公尺（室內或地下停車場常見），到附近後請對照上面的備註尋找。'
+      : '';
+    backLink.href = 'https://www.google.com/maps/dir/?api=1&destination=' + rec.lat + ',' + rec.lng + '&travelmode=walking';
+    savedBox.hidden = false;
+  }
+
+  saveBtn.addEventListener('click', function(){
+    say('定位中…（在室內請稍等幾秒）');
+    getPos({ enableHighAccuracy:true, timeout:15000, maximumAge:0 }).then(function(p){
+      var rec = {
+        lat: p.coords.latitude,
+        lng: p.coords.longitude,
+        acc: Math.round(p.coords.accuracy || 0),
+        ts: Date.now(),
+        note: noteIn.value.trim().slice(0, 80)
+      };
+      var stored = save(rec);
+      noteIn.value = '';
+      render();
+      say(stored ? '已記錄車位。' : '已記錄，但這個瀏覽器不允許儲存，關閉頁面後記錄會消失。', stored ? '' : 'warn');
+      savedBox.scrollIntoView({ block:'nearest' });
+    }).catch(function(err){
+      var denied = err && err.code === 1;
+      say(denied
+        ? '無法記錄：瀏覽器沒有取得位置權限。請允許本網站使用位置後再試一次。'
+        : '暫時抓不到位置。定位需要 https 連線與定位權限，請到訊號較好的地方再試一次。', 'warn');
+    });
+  });
+
+  clearBtn.addEventListener('click', function(){
+    wipe();
+    render();
+    say('已清除車位記錄。');
+  });
+
+  /* ---- 開關面板 ---- */
+  openBtn.addEventListener('click', function(){
+    say('');
+    render();
+    dlg.showModal();
+  });
+  closeBtn.addEventListener('click', function(){ dlg.close(); });
+  dlg.addEventListener('click', function(e){ if(e.target === dlg) dlg.close(); }); // 點背景關閉
+})();
+</script>
 
 </body>
 </html>
